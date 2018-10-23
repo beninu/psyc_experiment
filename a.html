@@ -20,6 +20,7 @@
     <button id="start_button"  onclick="onStart()">开始</button>
     </div>
 
+    <button id="save" onclick="onSave()">保存</button>
 <!--
     <p>输入一个成语，然后回车:</p>
     <input  id="chengyu_text" type="text">
@@ -143,6 +144,39 @@ function onChengyuInput() {
   t.value = "";
   t.focus();
 }
+
+function onSave() {
+  var filename = new Date().toString() + ".txt";
+  console.log("onSave called filename="+filename);
+
+  var chengyus = [];
+  var lis = document.getElementById("left_list").getElementsByTagName("li");
+  for (i = 0; i < lis.length; ++i) {
+    chengyus.push(lis[i].innerText);
+  }
+  lis = document.getElementById("right_list").getElementsByTagName("li");
+  for (i = 0; i < lis.length; ++i) {
+    chengyus.push(lis[i].innerText);
+  }
+  text = JSON.stringify(chengyus);
+  download(filename, text);
+}
+
+function download(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+
     </script>
 
   </body>
