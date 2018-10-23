@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div style="width: 100%; overflow: hidden;">
+          <div id="left"; style="width: 50%; float: left;">
+            <ul id="left_list">
+            </ul>
+          </div>
+          <div id="right"; style="margin-left: 50%;">
+            <ul id="right_list">
+            </ul>
+          </div>
+    </div>
+
+    <p>输入一个成语，然后按提交按钮:</p>
+
+    <form id="frm1" action="/action_page.php">
+        请输入成语: <input type="text" name="fname">
+        <input type="button" onclick="myFunction()" value="提交">
+    </form>
+
+    <script>
+
+function myFunction() {
+      var num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
+      "九", "十", "百", "千", "万", "亿"];
+      var f = document.getElementById("frm1");
+      text = f.elements.fname.value
+      var found = false;
+      for (var i = 0; i < text.length; i++) {
+          c = text.charAt(i);
+          for (var j = 0; j < num_char.length; j++) {
+            // console.log("c="+c+", num_char="+num_char[j]);
+            if (c == num_char[j]) {
+              found = true;
+              break;
+              //console.log(c + " found");
+            }
+          }
+      }
+      l = document.createElement("li");
+      l.innerText = text
+      var list
+      if (found) {
+        // console.log(text + " find num");
+        list = document.getElementById("left_list");
+      } else {
+        // console.log(text + " not find num");
+        list = document.getElementById("right_list");
+      }
+      list.insertAdjacentElement("beforeend", l);
+      f.elements.fname.value = "";
+      f.elements.fname.focus();
+}
+    </script>
+
+  </body>
+</html>
