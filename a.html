@@ -83,6 +83,7 @@ function onStart() {
     if (distance < 0) {
       clearInterval(x);
       document.getElementById("timer").innerHTML = "Time's Up Now";
+      test_object['test_end_time'] = new Date();
       removeChengyuInput();
       displaySave();
     }
