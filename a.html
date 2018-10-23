@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
+    <p id="demo"></p>
     <div style="width: 100%; overflow: hidden;">
           <div id="left"; style="width: 50%; float: left;">
             <ul id="left_list">
@@ -11,46 +12,101 @@
             </ul>
           </div>
     </div>
+    <button id="start_button"  onclick="onStart()">开始</button>
 
     <p>输入一个成语，然后按提交按钮:</p>
+    请输入成语:
+    <input  id="chengyu_text" type="text">
+    <button id="chengyu_button"  onclick="javascript:onChengyuInput()">提交</button>
 
-    <form id="frm1" action="/action_page.php">
-        请输入成语: <input type="text" name="fname">
-        <input type="button" onclick="myFunction()" value="提交">
-    </form>
+<script>
+console.log("init called");
 
-    <script>
+// change enter to click
+var chengyu_text = document.getElementById("chengyu_text");
+chengyu_text.addEventListener("keyup", function(ev) {
+    console.log("event called");
+    ev.preventDefault();
+    if (ev.keyCode === 13) {
+        document.getElementById("chengyu_button").click();
+    }
+});
 
-function myFunction() {
-      var num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
-      "九", "十", "百", "千", "万", "亿"];
-      var f = document.getElementById("frm1");
-      text = f.elements.fname.value
-      var found = false;
-      for (var i = 0; i < text.length; i++) {
-          c = text.charAt(i);
-          for (var j = 0; j < num_char.length; j++) {
-            // console.log("c="+c+", num_char="+num_char[j]);
-            if (c == num_char[j]) {
-              found = true;
-              break;
-              //console.log(c + " found");
-            }
-          }
-      }
-      l = document.createElement("li");
-      l.innerText = text
-      var list
-      if (found) {
-        // console.log(text + " find num");
-        list = document.getElementById("left_list");
-      } else {
-        // console.log(text + " not find num");
-        list = document.getElementById("right_list");
-      }
-      list.insertAdjacentElement("beforeend", l);
-      f.elements.fname.value = "";
-      f.elements.fname.focus();
+// var countDownDate = new Date("Jan 5, 2019 15:37:25").getTime();
+var start_time;
+
+function onStart() {
+  start_time = new Date();
+  var countDownDate = new Date(start_time.getTime()+480000).getTime();
+
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+
+    // Get todays date and time
+    var now = new Date().getTime();
+
+    // Find the distance between now and the count down date
+    var distance = countDownDate - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Display the result in the element with id="demo"
+    document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+
+    // If the count down is finished, write some text 
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("demo").innerHTML = "EXPIRED";
+    }
+  }, 1000);
+   // 隐藏 start_button
+  b = document.getElementById("start_button")
+  b.parentNode.removeChild(b);
+}
+
+var num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
+"九", "十", "百", "千", "万", "亿"];
+
+function onChengyuInput() {
+  console.log("onChengyuInput called");
+  now = new Date();
+  console.log("elapsed seconds="+(now-start_time)/1000);
+
+  if ((now -start_time) > 480*1000) {
+    console.log("time's up");
+    return;
+  }
+  console.log("called");
+  var t = document.getElementById("chengyu_text");
+  text = t.value
+    c = text.charAt(0);
+  var found = false;
+  for (var j = 0; j < num_char.length; j++) {
+    // console.log("c="+c+", num_char="+num_char[j]);
+    if (c == num_char[j]) {
+      found = true;
+      console.log(c + " found");
+      break;
+    }
+  }
+  l = document.createElement("li");
+  l.innerText = text
+    var list
+    if (found) {
+      // console.log(text + " find num");
+      list = document.getElementById("left_list");
+    } else {
+      // console.log(text + " not find num");
+      list = document.getElementById("right_list");
+    }
+  list.insertAdjacentElement("beforeend", l);
+  t.value = "";
+  t.focus();
 }
     </script>
 
