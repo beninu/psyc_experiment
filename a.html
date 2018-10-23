@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <p id="timer"></p>
+    <p id="timer" align="center"></p>
     <div style="width: 100%; overflow: hidden;">
           <div id="left"; style="width: 50%; float: left;">
             <ul id="left_list">
@@ -13,19 +13,27 @@
           </div>
     </div>
     <div id="start">
-    <p>点击开始按钮开始实验</p>
-    <p>时间八分钟</p>
-    <p>实验期间不要刷新页面，否则结果会丢失</p>
-    <p>结束时请按保存结果按钮</p>
-    <button id="start_button"  onclick="onStart()">开始</button>
+      <p>点击开始按钮开始实验</p>
+      <p>时间八分钟</p>
+      <p>实验期间不要刷新页面，否则结果会丢失</p>
+      <p>结束时请按保存结果按钮</p>
+      输入用户名: 
+      <input  id="user_name" type="text"></>
+      <button id="start_button"  onclick="onStart()">开始</button>
     </div>
 
+    <div id="save">
+<!--
     <button id="save" onclick="onSave()">保存</button>
+-->
+    </div>
+    <div id="input">
 <!--
     <p>输入一个成语，然后回车:</p>
     <input  id="chengyu_text" type="text">
     <button id="chengyu_button"  onclick="onChengyuInput()">提交</button>
 -->
+    </div>
 
 <script>
 console.log("init called");
@@ -34,13 +42,24 @@ console.log("init called");
 window.onbeforeunload = function () {return false;}
 
 
-// var countDownDate = new Date("Jan 5, 2019 15:37:25").getTime();
+// 全局数据结构
 var start_time;
+
+// 用来存放最后需要输出的结构
+var test_object = new Map();
+test_object['page_start_time'] = new Date();
+test_object['left_list'] = new Array();
+test_object['right_list'] = new Array();
 
 // 开始测试，并隐藏开始按钮
 function onStart() {
   start_time = new Date();
-  var countDownDate = new Date(start_time.getTime()+480000).getTime();
+  test_object['test_start_time'] = start_time;
+  var t = document.getElementById("user_name");
+  test_object['user_name'] = t.value
+
+  var countDownDate = new Date(start_time.getTime()+10000).getTime();
+  //var countDownDate = new Date(start_time.getTime()+480000).getTime();
 
   // Update the count down every 1 second
   var x = setInterval(function() {
@@ -52,19 +71,20 @@ function onStart() {
     var distance = countDownDate - now;
 
     // Time calculations for days, hours, minutes and seconds
-    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    //var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    //var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     // Display the result in the element with id="timer"
-    document.getElementById("timer").innerHTML = days + "d " + hours + "h "
-      + minutes + "m " + seconds + "s ";
+    document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
 
     // If the count down is finished, write some text 
     if (distance < 0) {
       clearInterval(x);
-      document.getElementById("timer").innerHTML = "EXPIRED";
+      document.getElementById("timer").innerHTML = "Time's Up Now";
+      removeChengyuInput();
+      displaySave();
     }
   }, 1000);
    // 隐藏 start_button
@@ -73,6 +93,11 @@ function onStart() {
 
   // 显示输入button
   displayChengyuInput();
+}
+
+function removeChengyuInput() {
+  b = document.getElementById("input")
+  b.parentNode.removeChild(b);
 }
 
 function displayChengyuInput() {
@@ -101,9 +126,9 @@ function displayChengyuInput() {
       }
     });
 
-  document.body.insertAdjacentElement("beforeend", p);
-  document.body.insertAdjacentElement("beforeend", chengyu_text);
-  document.body.insertAdjacentElement("beforeend", chengyu_button);
+  document.getElementById('input').insertAdjacentElement("beforeend", p);
+  document.getElementById('input').insertAdjacentElement("beforeend", chengyu_text);
+  document.getElementById('input').insertAdjacentElement("beforeend", chengyu_button);
 }
 
 var num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
@@ -134,15 +159,25 @@ function onChengyuInput() {
   l.innerText = text
     var list
     if (found) {
+      test_object['left_list'].push(text);
       // console.log(text + " find num");
       list = document.getElementById("left_list");
     } else {
+      test_object['right_list'].push(text);
       // console.log(text + " not find num");
       list = document.getElementById("right_list");
     }
   list.insertAdjacentElement("beforeend", l);
   t.value = "";
   t.focus();
+}
+
+function displaySave() {
+  save_button = document.createElement("button");
+  save_button.id = "save_button";
+  save_button.innerText = "保存";
+  save_button.onclick = onSave;
+  document.getElementById('save').insertAdjacentElement("beforeend", save_button);
 }
 
 function onSave() {
@@ -158,7 +193,7 @@ function onSave() {
   for (i = 0; i < lis.length; ++i) {
     chengyus.push(lis[i].innerText);
   }
-  text = JSON.stringify(chengyus);
+  text = JSON.stringify(test_object);
   download(filename, text);
 }
 
