@@ -3,14 +3,14 @@
   <body>
     <p id="timer" align="center"></p>
     <div style="width: 100%; overflow: hidden;">
-          <div id="left"; style="width: 50%; float: left;">
-            <ul id="left_list">
-            </ul>
-          </div>
-          <div id="right"; style="margin-left: 50%;">
-            <ul id="right_list">
-            </ul>
-          </div>
+      <div id="left"; style="width: 50%; float: left;">
+        <ul id="left_list">
+        </ul>
+      </div>
+      <div id="right"; style="margin-left: 50%;">
+        <ul id="right_list">
+        </ul>
+      </div>
     </div>
     <div id="start">
       <p>点击开始按钮开始实验</p>
@@ -21,44 +21,25 @@
       <input  id="user_id" type="text"></>
       <button id="start_button"  onclick="onStart()">开始输入成语</button>
     </div>
+    <div id="save1"> </div>
+    <div id="save2"> </div>
+    <div id="input1"> </div>
+    <div id="input2"> </div>
+    <div id="speed_start"> </div>
 
-    <div id="save1">
-<!--
-    <button id="save1" onclick="onSave1()">保存</button>
--->
-    </div>
-    <div id="save2">
-<!--
-    <button id="save2" onclick="onSave2()">保存</button>
--->
-    </div>
-    <div id="input1">
-<!--
-    <p>输入一个成语，然后回车:</p>
-    <input  id="chengyu_text" type="text">
-    <button id="chengyu_button"  onclick="onChengyuInput()">提交</button>
--->
-    </div>
-    <div id="input2">
-<!--
-    <p>输入一个成语，然后回车:</p>
-    <input  id="chengyu_text" type="text">
-    <button id="chengyu_button"  onclick="onChengyuInput()">提交</button>
--->
-    </div>
+    <script>
 
-<script>
 console.log("init called");
 
-// 刷新页面是提出警告
-window.onbeforeunload = function () {return false;}
+// 刷新页面时提出警告
+window.onbeforeunload = function () { return false;}
 
 
 // 全局数据结构
 // 输入成语的时间，单位秒
-var chengyu_input_time_seconds = 1;
+var chengyu_input_time_seconds = 2;
 // 输入速度测试的时间，单位秒
-var speed_input_time_seconds = 10000;
+var speed_input_time_seconds = 10;
 // 实验开始时间
 var exp_start_time;
 // 速度测试开始时间
@@ -66,52 +47,44 @@ var speed_start_time;
 
 // 用来存放最后需要输出的结构
 var test_object = new Map();
+
 // 页面打开时间
 test_object['page_start_time'] = new Date();
+// 测速结果数据
+test_object['speed'] = new Map();
+// 实验结果数据
+test_object['exp'] = new Map();
 // 数字开头成语列表
-test_object['left_list'] = new Array();
+test_object['exp']['left_list'] = new Array();
 // 非数字开头成语列表
-test_object['right_list'] = new Array();
+test_object['exp']['right_list'] = new Array();
+
 
 // 开始测试，并隐藏开始按钮
 function onStart() {
   exp_start_time = new Date();
-  test_object['exp_start_time'] = exp_start_time;
-  var t = document.getElementById("user_id");
-  test_object['user_id'] = t.value
+  test_object['exp']['start_time'] = exp_start_time;
 
-  // 计算得到倒计时停止时间
-  var timeout_time = exp_start_time.getTime()+chengyu_input_time_seconds*1000;
-  var countDownDate = new Date(timeout_time).getTime();
+  // 读取用户id
+  var user_id = document.getElementById("user_id").value;
 
-  // Update the count down every 1 second
-  var x = setInterval(function() {
+  // 防止空id
+  if (user_id.length < 1) {
+    return;
+  }
 
-    // Get todays date and time
-    var now = new Date().getTime();
+  test_object['user_id'] = user_id;
 
-    // Find the distance between now and the count down date
-    var distance = countDownDate - now;
+  var onTimeout = function() {
+    test_object['exp']['end_time'] = new Date();
+    removeElementById("input1");
+    displayButton("save1", onSave1, "保存");
+  }
 
-    // Time calculations for days, hours, minutes and seconds
-    //var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    //var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  // 设置倒计时，时间到了执行 onTimeout
+  createCountdownTimer(chengyu_input_time_seconds, onTimeout);
 
-    // Display the result in the element with id="timer"
-    document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
-
-    // If the count down is finished, write some text 
-    if (distance < 0) {
-      clearInterval(x);
-      document.getElementById("timer").innerHTML = "时间到";
-      test_object['test_end_time'] = new Date();
-      removeElementById("input1");
-      displaySaveButton("save1", onSave1, "保存");
-    }
-  }, 1000);
-   // 隐藏 start_button
+  // 隐藏 start_button
   removeElementById("start");
 
   // 显示输入button
@@ -120,7 +93,7 @@ function onStart() {
 
 
 var num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
-"九", "十", "百", "千", "万", "亿"];
+    "九", "十", "百", "千", "万", "亿"];
 
 function onChengyuInput() {
   console.log("onChengyuInput called");
@@ -133,6 +106,10 @@ function onChengyuInput() {
   }
   var t = document.getElementById("chengyu_text");
   text = t.value;
+  if (text.length < 4) {
+    console.log("text="+ text + ", text.length < 4");
+    return;
+  }
   c = text.charAt(0);
   var found = false;
   for (var j = 0; j < num_char.length; j++) {
@@ -144,55 +121,55 @@ function onChengyuInput() {
     }
   }
   l = document.createElement("li");
-  l.innerText = text
-    var list
-    if (found) {
-      test_object['left_list'].push(text);
-      // console.log(text + " find num");
-      list = document.getElementById("left_list");
-    } else {
-      test_object['right_list'].push(text);
-      // console.log(text + " not find num");
-      list = document.getElementById("right_list");
-    }
+  l.innerText = text;
+  var list;
+  sample = new Array();
+  sample.push(text);
+  sample.push(now);
+  if (found) {
+    test_object['exp']['left_list'].push(sample);
+    // console.log(text + " find num");
+    list = document.getElementById("left_list");
+  } else {
+    test_object['exp']['right_list'].push(sample);
+    // console.log(text + " not find num");
+    list = document.getElementById("right_list");
+  }
   list.insertAdjacentElement("beforeend", l);
   t.value = "";
   t.focus();
 }
 
-function removeElementById(elem) {
-  n = document.getElementById(elem)
-  n.parentNode.removeChild(n);
-}
-
 function displayChengyuInput() {
   console.log("displayChengyuInput called");
-  p = document.createElement("p");
-  p.innerText = "输入一个成语，然后回车:";
+  innerText = "输入一个成语，然后回车，数字开头的成语会出现在左边，非数字开头的成语会出现在右边";
+  p = createElementP(innerText);
 
-  chengyu_text = document.createElement("input");
-  chengyu_text.id = "chengyu_text";
-  chengyu_text.type = "text";
+  chengyu_text = createElementInputText("chengyu_text");
 
-  chengyu_button = document.createElement("button");
-  chengyu_button.id = "chengyu_button";
-  chengyu_button.innerText = "提交";
-  chengyu_button.onclick = onChengyuInput;
+  chengyu_button = createElementButton("chengyu_button", onChengyuInput, "提交");
 
   // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
-  // var chengyu_text = document.getElementById("chengyu_text");
   chengyu_text.addEventListener("keyup", function(ev) {
-      console.log("event called");
-      ev.preventDefault();
-      if (ev.keyCode === 13) {
-        //document.getElementById("chengyu_button").click();
-        chengyu_button.click();
-      }
-    });
+    console.log("event called");
+    ev.preventDefault();
+    if (ev.keyCode === 13) {
+      //document.getElementById("chengyu_button").click();
+      chengyu_button.click();
+    }
+  });
 
   document.getElementById('input1').insertAdjacentElement("beforeend", p);
   document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
   document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_button);
+
+  p = document.createElement("p");
+  p.innerText = "数字开头的成语";
+  document.getElementById('left').insertAdjacentElement("afterbegin", p);
+
+  p = document.createElement("p");
+  p.innerText = "非数字开头的成语";
+  document.getElementById('right').insertAdjacentElement("afterbegin", p);
 }
 
 function displaySpeedInput() {
@@ -210,18 +187,118 @@ function displaySpeedInput() {
   speed_text.style.height="200px";
   speed_text.style.fontSize="14pt";
 
-  //chengyu_button = document.createElement("button");
-  //chengyu_button.id = "chengyu_button";
-  //chengyu_button.innerText = "提交";
-  //chengyu_button.onclick = onChengyuInput;
+  displayButton('speed_start', onSpeedStart, "开始");
+  document.getElementById('input2').insertAdjacentElement("beforeend", p);
+  document.getElementById('input2').insertAdjacentElement("beforeend", p1);
+  document.getElementById('input2').insertAdjacentElement("beforeend", speed_text);
+}
 
+function onSpeedStart() {
   speed_start_time = new Date();
-  test_object['speed_start_time'] = speed_start_time;
+  test_object['speed']['start_time'] = speed_start_time;
 
   // 计算得到倒计时停止时间
   var timeout_time = speed_start_time.getTime()+speed_input_time_seconds*1000;
   var countDownDate = new Date(timeout_time).getTime();
 
+  var onTimeout = function() {
+    test_object['speed']['end_time'] = new Date();
+    speed_text = document.getElementById('speed_text').value;
+    test_object["speed"]["input"] = speed_text;
+    removeElementById("input2");
+    displayButton("save2", onSave2, "保存");
+  }
+  createCountdownTimer(speed_input_time_seconds, onTimeout);
+  removeElementById("speed_start");
+}
+
+
+function onSave1() {
+  var filename = test_object["user_id"];
+  filename += ".stage1.txt";
+  console.log("onSave1 called filename="+filename);
+
+  text = JSON.stringify(test_object);
+  download(filename, text);
+  removeElementById("save1");
+  removeElementById("left");
+  removeElementById("right");
+  displaySpeedInput();
+}
+
+function onSave2() {
+  var filename = test_object["user_id"];
+  filename += ".stage2.txt";
+  console.log("onSave2 called filename="+filename);
+  //input = document.getElementById("speed_text").innerText
+
+  text = JSON.stringify(test_object);
+  download(filename, text);
+}
+
+// 工具类，完成一个功能，和具体的业务流程无关
+function download(filename, text) {
+  var pom = document.createElement('a');
+  pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  pom.setAttribute('download', filename);
+
+  if (document.createEvent) {
+    var event = document.createEvent('MouseEvents');
+    event.initEvent('click', true, true);
+    pom.dispatchEvent(event);
+  }
+  else {
+    pom.click();
+  }
+}
+
+// 在id=div_id 的div的最后添加一个button
+function displayButton(divId, onClick, text) {
+  buttonId = divId+"_button";
+  button = createElementButton(buttonId, onClick, text);
+  document.getElementById(divId).insertAdjacentElement("beforeend", button);
+}
+
+function removeElementById(elem) {
+  n = document.getElementById(elem);
+  n.parentNode.removeChild(n);
+}
+
+function clearElementValue(elem) {
+  n = document.getElementById(elem);
+  n.value = ""
+}
+
+function createElementP(innerText) {
+  p = document.createElement("p");
+  p.innerText = innerText;
+  return p;
+}
+
+function createElementInputText(inputId) {
+  text = document.createElement("input");
+  text.id = inputId;
+  text.type = "text";
+  return text;
+}
+
+function createElementButton(buttonId, onClick, text) {
+  button = document.createElement("button");
+  button.id = buttonId;
+  button.innerText = text;
+  button.onclick = onClick;
+  return button;
+}
+
+// 设置一个Countdown Timer定时任务
+// 当 timeoutSeconds 过去之后，执行回调函数 onTimeout
+function createCountdownTimer(timeoutSeconds, onTimeout) {
+  // 计算得到倒计时停止时间
+  var now = new Date();
+  var timeoutDate = now.getTime()+timeoutSeconds*1000;
+  var countDownDate = new Date(timeoutDate).getTime();
+
+  // Update the count down every 1 second
   var x = setInterval(function() {
 
     // Get todays date and time
@@ -239,66 +316,13 @@ function displaySpeedInput() {
 
     // If the count down is finished, write some text 
     if (distance < 0) {
-      clearInterval(x);
-      document.getElementById("timer").innerHTML = "时间到";
-      test_object['speed_end_time'] = new Date();
-      speed_text = document.getElementById('speed_text').value;
-      test_object["speed_input"] = speed_text;
-      removeElementById("input2");
-      displaySaveButton("save2", onSave2, "保存");
-    }
-  }, 1000);
+                                              clearInterval(x);
+                                              document.getElementById("timer").innerHTML = "";
+                                              onTimeout();
+                                              }
+                                              }, 1000);
+                                              }
 
-  document.getElementById('input2').insertAdjacentElement("beforeend", p);
-  document.getElementById('input2').insertAdjacentElement("beforeend", p1);
-  document.getElementById('input2').insertAdjacentElement("beforeend", speed_text);
-}
-
-function displaySaveButton(id, onclick, text) {
-  save_button = document.createElement("button");
-  save_button.id = id;
-  save_button.innerText = text;
-  save_button.onclick = onclick;
-  document.getElementById(id).insertAdjacentElement("beforeend", save_button);
-}
-
-function onSave1() {
-  var filename = test_object["user_id"];
-  filename += ".stage1.txt";
-  console.log("onSave1 called filename="+filename);
-
-  text = JSON.stringify(test_object);
-  download(filename, text);
-  removeElementById("save1");
-  removeElementById("left_list");
-  removeElementById("right_list");
-  displaySpeedInput();
-}
-
-function onSave2() {
-  var filename = test_object["user_id"];
-  filename += ".stage2.txt";
-  console.log("onSave2 called filename="+filename);
-  //input = document.getElementById("speed_text").innerText
-
-  text = JSON.stringify(test_object);
-  download(filename, text);
-}
-
-function download(filename, text) {
-  var pom = document.createElement('a');
-  pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-  pom.setAttribute('download', filename);
-
-  if (document.createEvent) {
-    var event = document.createEvent('MouseEvents');
-    event.initEvent('click', true, true);
-    pom.dispatchEvent(event);
-  }
-  else {
-    pom.click();
-  }
-}
 
     </script>
 
