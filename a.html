@@ -17,17 +17,29 @@
       <p>时间八分钟</p>
       <p>实验期间不要刷新页面，否则结果会丢失</p>
       <p>结束时请按保存结果按钮</p>
-      输入用户名: 
-      <input  id="user_name" type="text"></>
-      <button id="start_button"  onclick="onStart()">开始</button>
+      请输入用户编号:
+      <input  id="user_id" type="text"></>
+      <button id="start_button"  onclick="onStart()">开始输入成语</button>
     </div>
 
-    <div id="save">
+    <div id="save1">
 <!--
-    <button id="save" onclick="onSave()">保存</button>
+    <button id="save1" onclick="onSave1()">保存</button>
 -->
     </div>
-    <div id="input">
+    <div id="save2">
+<!--
+    <button id="save2" onclick="onSave2()">保存</button>
+-->
+    </div>
+    <div id="input1">
+<!--
+    <p>输入一个成语，然后回车:</p>
+    <input  id="chengyu_text" type="text">
+    <button id="chengyu_button"  onclick="onChengyuInput()">提交</button>
+-->
+    </div>
+    <div id="input2">
 <!--
     <p>输入一个成语，然后回车:</p>
     <input  id="chengyu_text" type="text">
@@ -43,23 +55,34 @@ window.onbeforeunload = function () {return false;}
 
 
 // 全局数据结构
-var start_time;
+// 输入成语的时间，单位秒
+var chengyu_input_time_seconds = 10;
+// 输入速度测试的时间，单位秒
+var speed_input_time_seconds = 10;
+// 实验开始时间
+var exp_start_time;
+// 速度测试开始时间
+var speed_start_time;
 
 // 用来存放最后需要输出的结构
 var test_object = new Map();
+// 页面打开时间
 test_object['page_start_time'] = new Date();
+// 数字开头成语列表
 test_object['left_list'] = new Array();
+// 非数字开头成语列表
 test_object['right_list'] = new Array();
 
 // 开始测试，并隐藏开始按钮
 function onStart() {
-  start_time = new Date();
-  test_object['test_start_time'] = start_time;
-  var t = document.getElementById("user_name");
-  test_object['user_name'] = t.value
+  exp_start_time = new Date();
+  test_object['exp_start_time'] = exp_start_time;
+  var t = document.getElementById("user_id");
+  test_object['user_id'] = t.value
 
-  var countDownDate = new Date(start_time.getTime()+10000).getTime();
-  //var countDownDate = new Date(start_time.getTime()+480000).getTime();
+  // 计算得到倒计时停止时间
+  var timeout_time = exp_start_time.getTime()+chengyu_input_time_seconds*1000;
+  var countDownDate = new Date(timeout_time).getTime();
 
   // Update the count down every 1 second
   var x = setInterval(function() {
@@ -82,55 +105,19 @@ function onStart() {
     // If the count down is finished, write some text 
     if (distance < 0) {
       clearInterval(x);
-      document.getElementById("timer").innerHTML = "Time's Up Now";
+      document.getElementById("timer").innerHTML = "时间到";
       test_object['test_end_time'] = new Date();
-      removeChengyuInput();
-      displaySave();
+      removeElementById("input1");
+      displaySaveButton("save1", onSave1, "保存");
     }
   }, 1000);
    // 隐藏 start_button
-  b = document.getElementById("start")
-  b.parentNode.removeChild(b);
+  removeElementById("start");
 
   // 显示输入button
   displayChengyuInput();
 }
 
-function removeChengyuInput() {
-  b = document.getElementById("input")
-  b.parentNode.removeChild(b);
-}
-
-function displayChengyuInput() {
-  console.log("displayChengyuInput called");
-  p = document.createElement("p");
-  p.innerText = "输入一个成语，然后回车:";
-
-  chengyu_text = document.createElement("input");
-  chengyu_text.id = "chengyu_text";
-  chengyu_text.type = "text";
-
-  chengyu_button = document.createElement("button");
-  chengyu_button.id = "chengyu_button";
-  chengyu_button.innerText = "提交";
-  chengyu_button.onclick = onChengyuInput;
-  //chengyu_button.addEventListener("click", onChengyuInput());
-
-  // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
-  // var chengyu_text = document.getElementById("chengyu_text");
-  chengyu_text.addEventListener("keyup", function(ev) {
-      console.log("event called");
-      ev.preventDefault();
-      if (ev.keyCode === 13) {
-        //document.getElementById("chengyu_button").click();
-        chengyu_button.click();
-      }
-    });
-
-  document.getElementById('input').insertAdjacentElement("beforeend", p);
-  document.getElementById('input').insertAdjacentElement("beforeend", chengyu_text);
-  document.getElementById('input').insertAdjacentElement("beforeend", chengyu_button);
-}
 
 var num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
 "九", "十", "百", "千", "万", "亿"];
@@ -138,9 +125,9 @@ var num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
 function onChengyuInput() {
   console.log("onChengyuInput called");
   now = new Date();
-  console.log("elapsed seconds="+(now-start_time)/1000);
+  console.log("elapsed seconds="+(now-exp_start_time)/1000);
 
-  if ((now -start_time) > 480*1000) {
+  if ((now -exp_start_time) > 480*1000) {
     console.log("time's up");
     return;
   }
@@ -173,44 +160,141 @@ function onChengyuInput() {
   t.focus();
 }
 
-function displaySave() {
-  save_button = document.createElement("button");
-  save_button.id = "save_button";
-  save_button.innerText = "保存";
-  save_button.onclick = onSave;
-  document.getElementById('save').insertAdjacentElement("beforeend", save_button);
+function removeElementById(elem) {
+  n = document.getElementById(elem)
+  n.parentNode.removeChild(n);
 }
 
-function onSave() {
-  var filename = new Date().toString() + ".txt";
-  console.log("onSave called filename="+filename);
+function displayChengyuInput() {
+  console.log("displayChengyuInput called");
+  p = document.createElement("p");
+  p.innerText = "输入一个成语，然后回车:";
 
-  var chengyus = [];
-  var lis = document.getElementById("left_list").getElementsByTagName("li");
-  for (i = 0; i < lis.length; ++i) {
-    chengyus.push(lis[i].innerText);
-  }
-  lis = document.getElementById("right_list").getElementsByTagName("li");
-  for (i = 0; i < lis.length; ++i) {
-    chengyus.push(lis[i].innerText);
-  }
+  chengyu_text = document.createElement("input");
+  chengyu_text.id = "chengyu_text";
+  chengyu_text.type = "text";
+
+  chengyu_button = document.createElement("button");
+  chengyu_button.id = "chengyu_button";
+  chengyu_button.innerText = "提交";
+  chengyu_button.onclick = onChengyuInput;
+
+  // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
+  // var chengyu_text = document.getElementById("chengyu_text");
+  chengyu_text.addEventListener("keyup", function(ev) {
+      console.log("event called");
+      ev.preventDefault();
+      if (ev.keyCode === 13) {
+        //document.getElementById("chengyu_button").click();
+        chengyu_button.click();
+      }
+    });
+
+  document.getElementById('input1').insertAdjacentElement("beforeend", p);
+  document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
+  document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_button);
+}
+
+function displaySpeedInput() {
+  console.log("displaySpeedInput called");
+  p = document.createElement("p");
+  p.innerText = "开始输入下面文本，时间1分钟，时间结束后，自动停止";
+
+  p1 = document.createElement("p");
+  p1.innerText = "太史公牛马走司马迁再拜言。 　　少卿足下：曩者辱赐书，教以慎于接物，推贤进士为务，意气勤勤恳恳，若望仆不相师，而用流俗人之言。仆非敢如此也。虽罢驽，亦尝侧闻长者遗风矣。顾自以为身残处秽，动而见尤，欲益反损，是以抑郁而无谁语。谚曰：“谁为为之？孰令听之？”盖钟子期死，伯牙终身不复鼓琴。何则？士为知己者用，女为悦己者容。若仆大质已亏缺，虽材怀随和，行若由夷，终不可以为荣，适足以发笑而自点耳。 　　书辞宜答，会东从上来，又迫贱事，相见日浅，卒卒无须臾之间得竭指意。今少卿抱不测之罪，涉旬月，迫季冬，仆又薄从上雍，恐卒然不可讳。是仆终已不得舒愤懑以晓左右，则长逝者魂魄私恨无穷。请略陈固陋。阙然不报，幸勿为过。 　　仆闻之，修身者智之府也，爱施者仁之端也，取予者义之符也，耻辱者勇之决也，立名者行之极也。士有此五者，然后可以托于世，列于君子之林矣。故祸莫憯于欲利，悲莫痛于伤心，行莫丑于辱先，而诟莫大于宫刑。刑余之人，无所比数，非一世也，所从来远矣。昔卫灵公与雍渠载，孔子适陈；商鞅因景监见，赵良寒心；同子参乘，爰丝变色：自古而耻之。夫中材之人，事关于宦竖，莫不伤气，况忼慨之士乎！如今朝虽乏人，奈何令刀锯之余荐天下豪隽哉！仆赖先人绪业，得待罪辇毂下，二十余年矣。所以自惟：上之，不能纳忠效信，有奇策材力之誉，自结明主；次之，又不能拾遗补阙，招贤进能，显岩穴之士；外之，不能备行伍，攻城野战，有斩将搴旗之功；下之，不能累日积劳，取尊官厚禄，以为宗族交游光宠。四者无一遂，苟合取容，无所短长之效，可见于此矣。乡者，仆亦尝厕下大夫之列，陪外廷末议。不以此时引维纲，尽思虑，今已亏形为扫除之隶，在闒茸之中，乃欲昂首信眉，论列是非，不亦轻朝廷，羞当世之士邪！嗟乎！嗟乎！如仆，尚何言哉！尚何言哉";
+
+  speed_text = document.createElement("input");
+  speed_text.id = "speed_text";
+  speed_text.type = "text";
+
+  //chengyu_button = document.createElement("button");
+  //chengyu_button.id = "chengyu_button";
+  //chengyu_button.innerText = "提交";
+  //chengyu_button.onclick = onChengyuInput;
+
+  speed_start_time = new Date();
+  test_object['speed_start_time'] = speed_start_time;
+
+  // 计算得到倒计时停止时间
+  var timeout_time = speed_start_time.getTime()+speed_input_time_seconds*1000;
+  var countDownDate = new Date(timeout_time).getTime();
+
+  var x = setInterval(function() {
+
+    // Get todays date and time
+    var now = new Date().getTime();
+
+    // Find the distance between now and the count down date
+    var distance = countDownDate - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Display the result in the element with id="timer"
+    document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
+
+    // If the count down is finished, write some text 
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("timer").innerHTML = "时间到";
+      test_object['speed_end_time'] = new Date();
+      speed_text = document.getElementById('speed_text').value;
+      test_object["speed_input"] = speed_text;
+      removeElementById("input2");
+      displaySaveButton("save2", onSave2, "保存");
+    }
+  }, 1000);
+
+  document.getElementById('input2').insertAdjacentElement("beforeend", p);
+  document.getElementById('input2').insertAdjacentElement("beforeend", p1);
+  document.getElementById('input2').insertAdjacentElement("beforeend", speed_text);
+}
+
+function displaySaveButton(id, onclick, text) {
+  save_button = document.createElement("button");
+  save_button.id = id;
+  save_button.innerText = text;
+  save_button.onclick = onclick;
+  document.getElementById(id).insertAdjacentElement("beforeend", save_button);
+}
+
+function onSave1() {
+  var filename = test_object["user_id"];
+  filename += ".stage1.txt";
+  console.log("onSave1 called filename="+filename);
+
+  text = JSON.stringify(test_object);
+  download(filename, text);
+  removeElementById("save1");
+  removeElementById("left_list");
+  removeElementById("right_list");
+  displaySpeedInput();
+}
+
+function onSave2() {
+  var filename = test_object["user_id"];
+  filename += ".stage2.txt";
+  console.log("onSave2 called filename="+filename);
+  //input = document.getElementById("speed_text").innerText
+
   text = JSON.stringify(test_object);
   download(filename, text);
 }
 
 function download(filename, text) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
+  var pom = document.createElement('a');
+  pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  pom.setAttribute('download', filename);
 
-    if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
-    }
-    else {
-        pom.click();
-    }
+  if (document.createEvent) {
+    var event = document.createEvent('MouseEvents');
+    event.initEvent('click', true, true);
+    pom.dispatchEvent(event);
+  }
+  else {
+    pom.click();
+  }
 }
 
     </script>
