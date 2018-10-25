@@ -3,29 +3,27 @@
 <body>
 <p id="timer" align="center"></p>
 <div style="width: 100%; overflow: hidden;">
-  <div id="left"; style="width: 50%; float: left;">
-    <ul id="left_list">
+    <p>第一阶段数字开头成语</p>
+    <ul id="s1_list">
     </ul>
-  </div>
-  <div id="right"; style="margin-left: 50%;">
-    <ul id="right_list">
+    <p>第二阶段非数字开头成语</p>
+    <ul id="s2_list">
     </ul>
-  </div>
 </div>
 <div id="start">
-  <p>点击开始按钮开始实验</p>
-  <p>时间八分钟</p>
+  <p>本实验分为两个阶段，时间共八分钟</p>
+  <p>第一阶段四分钟，在输入框里面输入第一个字是数字的成语</p>
+  <p>第一阶段四分钟，在输入框里面输入第一个字是非数字的成语</p>
   <p>实验期间不要刷新页面，否则结果会丢失</p>
+  <p>点击开始按钮开始实验</p>
   <p>结束时请按保存结果按钮</p>
   请输入用户编号:
   <input  id="user_id" type="text"></input>
   <button id="start_button"  onclick="onStart()">开始输入成语</button>
 </div>
-<div id="save1"> </div>
-<div id="save2"> </div>
-<div id="input1"> </div>
-<div id="input2"> </div>
-<div id="speed_start"> </div>
+<div id="stage1"> </div>
+<div id="stage2"> </div>
+<div id="save"> </div>
 
 <script>
 
@@ -39,9 +37,9 @@
 
     // 全局数据结构
     // 输入成语的时间，单位秒
-    let chengyu_input_time_seconds = 10;
+    let s1_input_time_seconds = 20;
     // 输入速度测试的时间，单位秒
-    let speed_input_time_seconds = 10;
+    let s2_input_time_seconds = 20;
     // 实验开始时间
     let exp_start_time;
     // 速度测试开始时间
@@ -52,15 +50,15 @@
 
     // 页面打开时间
     test_object['page_start_time'] = new Date();
+    test_object['type'] = '实验二';
     // 测速结果数据
     test_object['speed'] = new Map();
     // 实验结果数据
     test_object['exp'] = new Map();
     // 数字开头成语列表
-    test_object['exp']['left_list'] = [];
+    test_object['exp']['s1_list'] = [];
     // 非数字开头成语列表
-    test_object['exp']['right_list'] = [];
-    test_object['type'] = '实验一';
+    test_object['exp']['s2_list'] = [];
 
 
     // 开始测试，并隐藏开始按钮
@@ -78,25 +76,49 @@
 
         test_object['user_id'] = user_id;
 
-        let onTimeout = function() {
-            test_object['exp']['end_time'] = new Date();
-            removeElementById("input1");
-            displayButton("save1", onSave1, "保存");
-        };
-
-        // 设置倒计时，时间到了执行 onTimeout
-        createCountdownTimer(chengyu_input_time_seconds, onTimeout);
 
         // 隐藏 start_button
         removeElementById("start");
 
         // 显示输入button
-        displayChengyuInput();
+        displayStage1();
+    }
+
+    function displayStage1() {
+        console.log("displayStage1 called");
+        let innerText = "输入一个成语，然后回车，数字开头的成语会显示，非数字开头的成语会被忽略";
+        let p = createElementP(innerText);
+
+        let s1_input_box = createElementInputText("s1_input_box");
+
+        let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "提交");
+
+        // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
+        s1_input_box.addEventListener("keyup", function(ev) {
+            console.log("event called");
+            ev.preventDefault();
+            if (ev.keyCode === 13) {
+                s1_input_btn.click();
+            }
+        });
+
+        document.getElementById('stage1').insertAdjacentElement("beforeend", p);
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_box);
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_btn);
+
+        let onStage1Timeout = function() {
+            test_object['exp']['stage1_end_time'] = new Date();
+            removeElementById("stage1");
+            displayStage2()
+        };
+
+        // 设置倒计时，时间到了执行 onTimeout
+        createCountdownTimer(s1_input_time_seconds, onStage1Timeout);
     }
 
 
-    function onChengyuInput() {
-        console.log("onChengyuInput called");
+    function onStage1Input() {
+        console.log("onStage1Input called");
         let now = new Date();
         console.log("elapsed seconds="+(now-exp_start_time)/1000);
 
@@ -104,131 +126,106 @@
             console.log("time's up");
             return;
         }
-        let t = document.getElementById("chengyu_text");
+        let t = document.getElementById("s1_input_box");
         let text = t.value;
         if (text.length < 4) {
             console.log("text="+ text + ", text.length < 4");
             return;
         }
         let found = isQualifiedChengYu(text);
+        if (!found) {
+            // 第一阶段，非数字开头的成语被忽略
+            return;
+        }
 
         let l = document.createElement("li");
         l.innerText = text;
 
-        let list;
+        let list = document.getElementById("s1_list");
         let sample = [];
         sample.push(text);
         sample.push(now);
-        if (found) {
-            test_object['exp']['left_list'].push(sample);
-            // console.log(text + " find num");
-            list = document.getElementById("left_list");
-        } else {
-            test_object['exp']['right_list'].push(sample);
-            // console.log(text + " not find num");
-            list = document.getElementById("right_list");
-        }
+        test_object['exp']['s1_list'].push(sample);
         list.insertAdjacentElement("beforeend", l);
         t.value = "";
         t.focus();
     }
 
-    function displayChengyuInput() {
-        console.log("displayChengyuInput called");
-        let innerText = "输入一个成语，然后回车，数字开头的成语会出现在左边，非数字开头的成语会出现在右边";
+    function displayStage2() {
+        console.log("displayStage2 called");
+        let innerText = "输入一个成语，然后回车，非数字开头的成语会显示，数字开头的成语会被忽略";
         let p = createElementP(innerText);
 
-        let chengyu_text = createElementInputText("chengyu_text");
+        let s2_input_box = createElementInputText("s2_input_box");
 
-        let chengyu_button = createElementButton("chengyu_button", onChengyuInput, "提交");
+        let s2_input_btn = createElementButton("s2_input_btn", onStage2Input, "提交");
 
-        // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
-        chengyu_text.addEventListener("keyup", function(ev) {
+        // 把input text元素的回车键变成button元素的鼠标点击事件
+        s2_input_box.addEventListener("keyup", function(ev) {
             console.log("event called");
             ev.preventDefault();
             if (ev.keyCode === 13) {
-                chengyu_button.click();
+                s2_input_btn.click();
             }
         });
 
-        document.getElementById('input1').insertAdjacentElement("beforeend", p);
-        document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
-        document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_button);
+        document.getElementById('stage2').insertAdjacentElement("beforeend", p);
+        document.getElementById('stage2').insertAdjacentElement("beforeend", s2_input_box);
+        document.getElementById('stage2').insertAdjacentElement("beforeend", s2_input_btn);
 
-        p = document.createElement("p");
-        p.innerText = "数字开头的成语";
-        document.getElementById('left').insertAdjacentElement("afterbegin", p);
-
-        p = document.createElement("p");
-        p.innerText = "非数字开头的成语";
-        document.getElementById('right').insertAdjacentElement("afterbegin", p);
-    }
-
-    function displaySpeedInput() {
-        console.log("displaySpeedInput called");
-        let p = document.createElement("p");
-        p.innerText = "开始输入下面文本，时间1分钟，时间结束后，自动停止";
-
-        let p1 = document.createElement("p");
-        p1.innerText = "太史公牛马走司马迁再拜言。少卿足下：曩者辱赐书，教以慎于接物，推贤进士为务，意气勤勤恳恳，若望仆不相师，而用流俗人之言。仆非敢如此也。虽罢驽，亦尝侧闻长者遗风矣。顾自以为身残处秽，动而见尤，欲益反损，是以抑郁而无谁语。谚曰：“谁为为之？孰令听之？”盖钟子期死，伯牙终身不复鼓琴。何则？士为知己者用，女为悦己者容。若仆大质已亏缺，虽材怀随和，行若由夷，终不可以为荣，适足以发笑而自点耳。";
-
-        // speed_text = document.createElement("input");
-        // speed_text.id = "speed_text";
-        // speed_text.size = 300;
-        // speed_text.type = "text";
-        // speed_text.style.height="200px";
-        // speed_text.style.fontSize="14pt";
-        // speed_text.style.alignContent = "initial";
-        // speed_text.disabled = true;
-
-        let speed_ta = document.createElement("textarea");
-        speed_ta.id = "speed_ta";
-        speed_ta.cols = "200";
-        speed_ta.rows = "10";
-        speed_ta.disabled = true;
-
-        displayButton('speed_start', onSpeedStart, "开始输入");
-        document.getElementById('input2').insertAdjacentElement("beforeend", p);
-        document.getElementById('input2').insertAdjacentElement("beforeend", p1);
-        document.getElementById('input2').insertAdjacentElement("beforeend", speed_ta);
-    }
-
-    function onSpeedStart() {
-        speed_start_time = new Date();
-        test_object['speed']['start_time'] = speed_start_time;
-
-        // document.getElementById("speed_text").disabled = false;
-        document.getElementById("speed_ta").disabled = false;
-
-        let onTimeout = function() {
-            test_object['speed']['end_time'] = new Date();
-            test_object["speed"]["input"] = document.getElementById('speed_ta').value;
-            removeElementById("input2");
-            displayButton("save2", onSave2, "保存");
+        let onStage2Timeout = function() {
+            test_object['exp']['stage1_end_time'] = new Date();
+            removeElementById("stage2");
+            displaySave()
         };
-        createCountdownTimer(speed_input_time_seconds, onTimeout);
-        removeElementById("speed_start");
+
+        // 设置倒计时，时间到了执行 onTimeout
+        createCountdownTimer(s2_input_time_seconds, onStage2Timeout);
+    }
+
+    function onStage2Input() {
+        console.log("onStage2Input called");
+        let now = new Date();
+        console.log("elapsed seconds="+(now-exp_start_time)/1000);
+
+        if ((now -exp_start_time) > 480*1000) {
+            console.log("time's up");
+            return;
+        }
+        let t = document.getElementById("s2_input_box");
+        let text = t.value;
+        if (text.length < 4) {
+            console.log("text="+ text + ", text.length < 4");
+            return;
+        }
+        let found = isQualifiedChengYu(text);
+        if (found) {
+            // 第二阶段，数字开头的成语被忽略
+            return;
+        }
+
+        let l = document.createElement("li");
+        l.innerText = text;
+
+        let list = document.getElementById("s2_list");
+        let sample = [];
+        sample.push(text);
+        sample.push(now);
+        test_object['exp']['s2_list'].push(sample);
+        list.insertAdjacentElement("beforeend", l);
+        t.value = "";
+        t.focus();
+    }
+
+    function displaySave() {
+        displayButton("save", onSave, "保存实验结果");
     }
 
 
-    function onSave1() {
+    function onSave() {
         let filename = test_object["user_id"];
         filename += ".stage1.txt";
         console.log("onSave1 called filename="+filename);
-
-        let text = JSON.stringify(test_object);
-        download(filename, text);
-        removeElementById("save1");
-        removeElementById("left");
-        removeElementById("right");
-        displaySpeedInput();
-    }
-
-    function onSave2() {
-        let filename = test_object["user_id"];
-        filename += ".stage2.txt";
-        console.log("onSave2 called filename="+filename);
-        //input = document.getElementById("speed_text").innerText
 
         let text = JSON.stringify(test_object);
         download(filename, text);
