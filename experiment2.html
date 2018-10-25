@@ -36,9 +36,9 @@
 
     // 全局数据结构
     // 输入成语的时间，单位秒
-    let s1_input_time_seconds = 10;
+    let s1_input_time_seconds = 240;
     // 输入速度测试的时间，单位秒
-    let s2_input_time_seconds = 10;
+    let s2_input_time_seconds = 240;
     // 实验开始时间
     let exp_start_time;
     // 速度测试开始时间
@@ -146,10 +146,10 @@
         let now = new Date();
         console.log("elapsed seconds="+(now-exp_start_time)/1000);
 
-        if ((now -exp_start_time) > 480*1000) {
-            console.log("time's up");
-            return;
-        }
+        // if ((now -exp_start_time) > 480*1000) {
+        //     console.log("time's up");
+        //     return;
+        // }
         let t = document.getElementById("s1_input_box");
         let text = t.value;
         if (text.length < 4) {
