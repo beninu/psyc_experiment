@@ -33,13 +33,13 @@
 
     // 刷新页面时提出警告
     window.onBeforeUnload = function () { return false;};
-    document.onSelectStart = function () { return false;};
+    document.onselectstart = function () { return false;};
 
 
 
     // 全局数据结构
     // 输入成语的时间，单位秒
-    let chengyu_input_time_seconds = 2;
+    let chengyu_input_time_seconds = 10;
     // 输入速度测试的时间，单位秒
     let speed_input_time_seconds = 10;
     // 实验开始时间
