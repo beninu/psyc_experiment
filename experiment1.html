@@ -36,7 +36,7 @@
 
     // 全局数据结构
     // 输入成语的时间，单位秒
-    let chengyu_input_time_seconds = 480;
+    let chengyu_input_time_seconds = 485;
     // 输入速度测试的时间，单位秒
     let speed_input_time_seconds = 60;
     // 实验开始时间
@@ -227,6 +227,8 @@
 
 
     function onSave1() {
+        test_object['exp']['left_list_num'] = test_object['exp']['left_list'].length;
+        test_object['exp']['right_list_num'] = test_object['exp']['right_list'].length;
         let filename = test_object["user_id"];
         filename += ".stage1.txt";
         console.log("onSave1 called filename="+filename);

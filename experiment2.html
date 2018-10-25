@@ -1,5 +1,21 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <style>
+        .button {
+            background-color: #e7e7e7;
+            /*border: none;*/
+            /*color: white;*/
+            /*padding: 15px 32px;*/
+            /*text-align: center;*/
+            /*text-decoration: none;*/
+            /*display: inline-block;*/
+            /*font-size: 16px;*/
+            /*margin: 4px 2px;*/
+            /*cursor: pointer;*/
+        }
+    </style>
+</head>
 <body>
 <p id="timer" align="center">00m 00s</p>
 <!--<div style="width: 100%; overflow: hidden;">-->
@@ -18,7 +34,8 @@
 </div>
 <div id="start">
   请输入用户编号: <input  id="user_id" type="text"></input>
-  <button id="start_button"  onclick="onStart()">开始输入成语</button>
+  <button id="start_button" onclick="onStart()">开始输入成语</button>
+    <!--<button id="start_button" class="button" onclick="onStart()">开始输入成语</button>-->
 </div>
 <div id="stage1"> </div>
 <div id="stage2"> </div>
@@ -36,7 +53,7 @@
 
     // 全局数据结构
     // 输入成语的时间，单位秒
-    let s1_input_time_seconds = 240;
+    let s1_input_time_seconds = 245;
     // 输入速度测试的时间，单位秒
     let s2_input_time_seconds = 240;
     // 实验开始时间
@@ -251,6 +268,8 @@
 
 
     function onSave() {
+        test_object['exp']['left_list_num'] = test_object['exp']['left_list'].length;
+        test_object['exp']['right_list_num'] = test_object['exp']['right_list'].length;
         let filename = test_object["user_id"];
         filename += ".stage1.txt";
         console.log("onSave1 called filename="+filename);
