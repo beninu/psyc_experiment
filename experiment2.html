@@ -2,23 +2,22 @@
 <html>
 <body>
 <p id="timer" align="center"></p>
+<!--<div style="width: 100%; overflow: hidden;">-->
+    <!--<p>第一阶段数字开头成语</p>-->
+    <!--<ul id="s1_list">-->
+    <!--</ul>-->
+    <!--<p>第二阶段非数字开头成语</p>-->
+    <!--<ul id="right_list">-->
+    <!--</ul>-->
+<!--</div>-->
 <div style="width: 100%; overflow: hidden;">
-    <p>第一阶段数字开头成语</p>
-    <ul id="s1_list">
-    </ul>
-    <p>第二阶段非数字开头成语</p>
-    <ul id="s2_list">
-    </ul>
+    <div id="left"; style="width: 50%; float: left;">
+    </div>
+    <div id="right"; style="margin-left: 50%;">
+    </div>
 </div>
 <div id="start">
-  <p>本实验分为两个阶段，时间共八分钟</p>
-  <p>第一阶段四分钟，在输入框里面输入第一个字是数字的成语</p>
-  <p>第一阶段四分钟，在输入框里面输入第一个字是非数字的成语</p>
-  <p>实验期间不要刷新页面，否则结果会丢失</p>
-  <p>点击开始按钮开始实验</p>
-  <p>结束时请按保存结果按钮</p>
-  请输入用户编号:
-  <input  id="user_id" type="text"></input>
+  请输入用户编号: <input  id="user_id" type="text"></input>
   <button id="start_button"  onclick="onStart()">开始输入成语</button>
 </div>
 <div id="stage1"> </div>
@@ -37,9 +36,9 @@
 
     // 全局数据结构
     // 输入成语的时间，单位秒
-    let s1_input_time_seconds = 20;
+    let s1_input_time_seconds = 10;
     // 输入速度测试的时间，单位秒
-    let s2_input_time_seconds = 20;
+    let s2_input_time_seconds = 10;
     // 实验开始时间
     let exp_start_time;
     // 速度测试开始时间
@@ -56,9 +55,9 @@
     // 实验结果数据
     test_object['exp'] = new Map();
     // 数字开头成语列表
-    test_object['exp']['s1_list'] = [];
+    test_object['exp']['left_list'] = [];
     // 非数字开头成语列表
-    test_object['exp']['s2_list'] = [];
+    test_object['exp']['right_list'] = [];
 
 
     // 开始测试，并隐藏开始按钮
@@ -86,7 +85,32 @@
 
     function displayStage1() {
         console.log("displayStage1 called");
-        let innerText = "输入一个成语，然后回车，数字开头的成语会显示，非数字开头的成语会被忽略";
+
+
+        let innerHTML = "<p>数字开头的成语</p>";
+        innerHTML += "<p>比如: 一石二鸟 三足鼎立 百口莫辩</p>";
+        // innerHTML += "<p>一石二鸟</p>";
+        // innerHTML += "<p>三足鼎立</p>";
+        // innerHTML += "<p>百口莫辩</p>";
+        innerHTML += '<ul id=\"left_list\"></ul>'
+
+        let elementLeft = document.getElementById('left');
+        elementLeft.innerHTML = innerHTML;
+
+
+        let innerHTML2 = "<p>非数字开头的成语</p>";
+        innerHTML2 += "<p>很多, 就不举例去限制你的思维了</p>";
+        // innerHTML2 += "<p>就不举例</p>";
+        // innerHTML2 += "<p>去限制你</p>";
+        // innerHTML2 += "<p>的思维了</p>";
+        innerHTML2 += '<ul id=\"right_list\"></ul>'
+
+        let elementRight = document.getElementById('right');
+        elementRight.innerHTML = innerHTML2;
+
+
+
+        let innerText = "输入一个成语，回车即可";
         let p = createElementP(innerText);
 
         let s1_input_box = createElementInputText("s1_input_box");
@@ -141,11 +165,11 @@
         let l = document.createElement("li");
         l.innerText = text;
 
-        let list = document.getElementById("s1_list");
+        let list = document.getElementById("left_list");
         let sample = [];
         sample.push(text);
         sample.push(now);
-        test_object['exp']['s1_list'].push(sample);
+        test_object['exp']['left_list'].push(sample);
         list.insertAdjacentElement("beforeend", l);
         t.value = "";
         t.focus();
@@ -153,7 +177,7 @@
 
     function displayStage2() {
         console.log("displayStage2 called");
-        let innerText = "输入一个成语，然后回车，非数字开头的成语会显示，数字开头的成语会被忽略";
+        let innerText = "输入一个成语，回车即可";
         let p = createElementP(innerText);
 
         let s2_input_box = createElementInputText("s2_input_box");
@@ -207,18 +231,22 @@
         let l = document.createElement("li");
         l.innerText = text;
 
-        let list = document.getElementById("s2_list");
+        let list = document.getElementById("right_list");
         let sample = [];
         sample.push(text);
         sample.push(now);
-        test_object['exp']['s2_list'].push(sample);
+        test_object['exp']['right_list'].push(sample);
         list.insertAdjacentElement("beforeend", l);
         t.value = "";
         t.focus();
     }
 
     function displaySave() {
-        displayButton("save", onSave, "保存实验结果");
+        // displayButton("save", onSave, "保存实验结果");
+        let button = createElementButton("save_btn", onSave, "保存实验结果");
+        let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
+        document.getElementById("save").insertAdjacentElement("beforeend", p);
+        document.getElementById("save").insertAdjacentElement("beforeend", button);
     }
 
 
