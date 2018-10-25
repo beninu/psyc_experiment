@@ -4,8 +4,6 @@
 <p id="timer" align="center"></p>
 <div style="width: 100%; overflow: hidden;">
   <div id="left"; style="width: 50%; float: left;">
-    <ul id="left_list">
-    </ul>
   </div>
   <div id="right"; style="margin-left: 50%;">
     <ul id="right_list">
@@ -13,10 +11,10 @@
   </div>
 </div>
 <div id="start">
-  <p>点击开始按钮开始实验</p>
-  <p>时间八分钟</p>
-  <p>实验期间不要刷新页面，否则结果会丢失</p>
-  <p>结束时请按保存结果按钮</p>
+  <!--<p>点击开始按钮开始实验</p>-->
+  <!--<p>时间八分钟</p>-->
+  <!--<p>实验期间不要刷新页面，否则结果会丢失</p>-->
+  <!--<p>结束时请按保存结果按钮</p>-->
   请输入用户编号:
   <input  id="user_id" type="text"></input>
   <button id="start_button"  onclick="onStart()">开始输入成语</button>
@@ -24,8 +22,9 @@
 <div id="save1"> </div>
 <div id="save2"> </div>
 <div id="input1"> </div>
-<div id="input2"> </div>
+<div id="input2">
 <div id="speed_start"> </div>
+     </div>
 
 <script>
 
@@ -39,9 +38,9 @@
 
     // 全局数据结构
     // 输入成语的时间，单位秒
-    let chengyu_input_time_seconds = 480;
+    let chengyu_input_time_seconds = 2;
     // 输入速度测试的时间，单位秒
-    let speed_input_time_seconds = 60;
+    let speed_input_time_seconds = 2;
     // 实验开始时间
     let exp_start_time;
     // 速度测试开始时间
@@ -135,7 +134,7 @@
 
     function displayChengyuInput() {
         console.log("displayChengyuInput called");
-        let innerText = "输入一个成语，然后回车，数字开头的成语会出现在左边，非数字开头的成语会出现在右边";
+        let innerText = "输入一个成语后，回车即可";
         let p = createElementP(innerText);
 
         let chengyu_text = createElementInputText("chengyu_text");
@@ -155,19 +154,32 @@
         document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
         document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_button);
 
-        p = document.createElement("p");
-        p.innerText = "数字开头的成语";
-        document.getElementById('left').insertAdjacentElement("afterbegin", p);
+        let innerHTML = "<p>数字开头的成语</p>";
+        innerHTML += "<p>比如: 一石二鸟 三足鼎立 百口莫辩</p>";
+        // innerHTML += "<p>一石二鸟</p>";
+        // innerHTML += "<p>三足鼎立</p>";
+        // innerHTML += "<p>百口莫辩</p>";
+        innerHTML += '<ul id=\"left_list\"></ul>'
 
-        p = document.createElement("p");
-        p.innerText = "非数字开头的成语";
-        document.getElementById('right').insertAdjacentElement("afterbegin", p);
+        let elementLeft = document.getElementById('left');
+        elementLeft.innerHTML = innerHTML;
+
+
+        let innerHTML2 = "<p>非数字开头的成语</p>";
+        innerHTML2 += "<p>很多, 就不举例去限制你的思维了</p>";
+        // innerHTML2 += "<p>就不举例</p>";
+        // innerHTML2 += "<p>去限制你</p>";
+        // innerHTML2 += "<p>的思维了</p>";
+        innerHTML2 += '<ul id=\"right_list\"></ul>'
+
+        let elementRight = document.getElementById('right');
+        elementRight.innerHTML = innerHTML2;
     }
 
     function displaySpeedInput() {
         console.log("displaySpeedInput called");
         let p = document.createElement("p");
-        p.innerText = "开始输入下面文本，时间1分钟，时间结束后，自动停止";
+        p.innerText = "请在下框快速抄写如下文本，时间1分钟，点击 [开始输入] 按钮开始";
 
         let p1 = document.createElement("p");
         p1.innerText = "包罗万象，琳琅满目，美不胜收，目不暇接，无奇不有，五花八门，眼花缭乱，洋洋大观，一应俱全，应有尽有，应接不暇，比比皆是，不可计数，层出不穷，绰绰有余，多多益善，多如牛毛 ，漫山遍野，星罗棋布，丰富多彩，车水马龙，川流不息，纷至沓来，花花世界，挥汗如雨，门庭若市，万人空巷，水泄不通，人声鼎沸，震耳欲聋，座无虚席，直言不讳，无所顾忌，拐弯抹角，真心诚意";
@@ -187,9 +199,10 @@
         speed_ta.rows = "10";
         speed_ta.disabled = true;
 
-        displayButton('speed_start', onSpeedStart, "开始输入");
+        let button = createElementButton('speed_start_btn', onSpeedStart, "开始输入");
         document.getElementById('input2').insertAdjacentElement("beforeend", p);
         document.getElementById('input2').insertAdjacentElement("beforeend", p1);
+        document.getElementById('input2').insertAdjacentElement("beforeend", button);
         document.getElementById('input2').insertAdjacentElement("beforeend", speed_ta);
     }
 
@@ -204,10 +217,14 @@
             test_object['speed']['end_time'] = new Date();
             test_object["speed"]["input"] = document.getElementById('speed_ta').value;
             removeElementById("input2");
-            displayButton("save2", onSave2, "保存");
+
+            let button = createElementButton("save2_btn", onSave2, "保存");
+            let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
+            document.getElementById("save2").insertAdjacentElement("beforeend", p);
+            document.getElementById("save2").insertAdjacentElement("beforeend", button);
         };
         createCountdownTimer(speed_input_time_seconds, onTimeout);
-        removeElementById("speed_start");
+        removeElementById("speed_start_btn");
     }
 
 
@@ -273,6 +290,13 @@
     function createElementP(innerText) {
         let p = document.createElement("p");
         p.innerText = innerText;
+        return p;
+    }
+
+    function createElementPAfter(innerText, elementBefore) {
+        let p = document.createElement("p");
+        p.innerText = innerText;
+        elementBefore.insertAdjacentElement("afterend", p);
         return p;
     }
 
