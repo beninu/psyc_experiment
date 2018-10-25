@@ -32,7 +32,9 @@
 console.log("init called");
 
 // 刷新页面时提出警告
-window.onbeforeunload = function () { return false;}
+window.onBeforeUnload = function () { return false;}
+document.onSelectStart = function () { return false;}
+
 
 
 // 全局数据结构
@@ -180,30 +182,40 @@ function displaySpeedInput() {
   p1 = document.createElement("p");
   p1.innerText = "太史公牛马走司马迁再拜言。少卿足下：曩者辱赐书，教以慎于接物，推贤进士为务，意气勤勤恳恳，若望仆不相师，而用流俗人之言。仆非敢如此也。虽罢驽，亦尝侧闻长者遗风矣。顾自以为身残处秽，动而见尤，欲益反损，是以抑郁而无谁语。谚曰：“谁为为之？孰令听之？”盖钟子期死，伯牙终身不复鼓琴。何则？士为知己者用，女为悦己者容。若仆大质已亏缺，虽材怀随和，行若由夷，终不可以为荣，适足以发笑而自点耳。";
 
-  speed_text = document.createElement("input");
-  speed_text.id = "speed_text";
-  speed_text.size = 300;
-  speed_text.type = "text";
-  speed_text.style.height="200px";
-  speed_text.style.fontSize="14pt";
+  // speed_text = document.createElement("input");
+  // speed_text.id = "speed_text";
+  // speed_text.size = 300;
+  // speed_text.type = "text";
+  // speed_text.style.height="200px";
+  // speed_text.style.fontSize="14pt";
+  // speed_text.style.alignContent = "initial";
+  // speed_text.disabled = true;
 
-  displayButton('speed_start', onSpeedStart, "开始");
+  speed_ta = document.createElement("textarea");
+  speed_ta.id = "speed_ta";
+  speed_ta.cols = "200";
+  speed_ta.rows = "10";
+  speed_ta.disabled = true;
+
+  displayButton('speed_start', onSpeedStart, "开始输入");
   document.getElementById('input2').insertAdjacentElement("beforeend", p);
   document.getElementById('input2').insertAdjacentElement("beforeend", p1);
-  document.getElementById('input2').insertAdjacentElement("beforeend", speed_text);
+  document.getElementById('input2').insertAdjacentElement("beforeend", speed_ta);
 }
 
 function onSpeedStart() {
   speed_start_time = new Date();
   test_object['speed']['start_time'] = speed_start_time;
 
+  // document.getElementById("speed_text").disabled = false;
+  document.getElementById("speed_ta").disabled = false;
   // 计算得到倒计时停止时间
   var timeout_time = speed_start_time.getTime()+speed_input_time_seconds*1000;
   var countDownDate = new Date(timeout_time).getTime();
 
   var onTimeout = function() {
     test_object['speed']['end_time'] = new Date();
-    speed_text = document.getElementById('speed_text').value;
+    speed_text = document.getElementById('speed_ta').value;
     test_object["speed"]["input"] = speed_text;
     removeElementById("input2");
     displayButton("save2", onSave2, "保存");
@@ -234,6 +246,9 @@ function onSave2() {
 
   text = JSON.stringify(test_object);
   download(filename, text);
+
+  // 一次实验完成，重新刷新页面
+  window.location.reload(false);
 }
 
 // 工具类，完成一个功能，和具体的业务流程无关
