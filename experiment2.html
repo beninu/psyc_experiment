@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<p id="timer" align="center"></p>
+<p id="timer" align="center">00m 00s</p>
 <!--<div style="width: 100%; overflow: hidden;">-->
     <!--<p>第一阶段数字开头成语</p>-->
     <!--<ul id="s1_list">-->
@@ -343,7 +343,7 @@
             // If the count down is finished, write some text
             if (distance < 0) {
                 clearInterval(x);
-                document.getElementById("timer").innerHTML = "";
+                document.getElementById("timer").innerHTML = "00m 00s";
                 onTimeout();
             }
         }, 1000);

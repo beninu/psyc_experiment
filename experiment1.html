@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-<p id="timer" align="center"></p>
+<p id="timer" align="center">00m 00s</p>
 <div style="width: 100%; overflow: hidden;">
   <div id="left"; style="width: 50%; float: left;">
   </div>
@@ -340,7 +340,7 @@
             // If the count down is finished, write some text
             if (distance < 0) {
                 clearInterval(x);
-                document.getElementById("timer").innerHTML = "";
+                document.getElementById("timer").innerHTML = "00m 00s";
                 onTimeout();
             }
         }, 1000);
