@@ -39,7 +39,9 @@
 </div>
 <div id="stage1"> </div>
 <div id="stage2"> </div>
+<div id="input2"> </div>
 <div id="save"> </div>
+<div id="save2"> </div>
 
 <script>
 
@@ -56,6 +58,8 @@
     let s1_input_time_seconds = 245;
     // 输入速度测试的时间，单位秒
     let s2_input_time_seconds = 240;
+    // 输入速度测试的时间，单位秒
+    let speed_input_time_seconds = 60;
     // 实验开始时间
     let exp_start_time;
     // 速度测试开始时间
@@ -260,19 +264,84 @@
 
     function displaySave() {
         // displayButton("save", onSave, "保存实验结果");
-        let button = createElementButton("save_btn", onSave, "保存实验结果");
+        let button = createElementButton("save_btn", onSave1, "保存实验结果");
         let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
         document.getElementById("save").insertAdjacentElement("beforeend", p);
         document.getElementById("save").insertAdjacentElement("beforeend", button);
     }
 
 
-    function onSave() {
+    function onSave1() {
         test_object['exp']['left_list_num'] = test_object['exp']['left_list'].length;
         test_object['exp']['right_list_num'] = test_object['exp']['right_list'].length;
         let filename = test_object["user_id"];
         filename += ".stage1.txt";
         console.log("onSave1 called filename="+filename);
+
+        let text = JSON.stringify(test_object);
+        download(filename, text);
+        removeElementById('left');
+        removeElementById('right');
+        removeElementById('save');
+        displaySpeedInput();
+    }
+
+    function displaySpeedInput() {
+        console.log("displaySpeedInput called");
+        let p = document.createElement("p");
+        p.innerText = "请在下框快速抄写如下文本，时间1分钟，点击 [开始输入] 按钮开始";
+
+        let p1 = document.createElement("p");
+        p1.innerText = "包罗万象，琳琅满目，美不胜收，目不暇接，无奇不有，五花八门，眼花缭乱，洋洋大观，一应俱全，应有尽有，应接不暇，比比皆是，不可计数，层出不穷，绰绰有余，多多益善，多如牛毛 ，漫山遍野，星罗棋布，丰富多彩，车水马龙，川流不息，纷至沓来，花花世界，挥汗如雨，门庭若市，万人空巷，水泄不通，人声鼎沸，震耳欲聋，座无虚席，直言不讳，无所顾忌，拐弯抹角，真心诚意";
+
+        // speed_text = document.createElement("input");
+        // speed_text.id = "speed_text";
+        // speed_text.size = 300;
+        // speed_text.type = "text";
+        // speed_text.style.height="200px";
+        // speed_text.style.fontSize="14pt";
+        // speed_text.style.alignContent = "initial";
+        // speed_text.disabled = true;
+
+        let speed_ta = document.createElement("textarea");
+        speed_ta.id = "speed_ta";
+        speed_ta.cols = "200";
+        speed_ta.rows = "10";
+        speed_ta.disabled = true;
+
+        let button = createElementButton('speed_start_btn', onSpeedStart, "开始输入");
+        document.getElementById('input2').insertAdjacentElement("beforeend", p);
+        document.getElementById('input2').insertAdjacentElement("beforeend", p1);
+        document.getElementById('input2').insertAdjacentElement("beforeend", button);
+        document.getElementById('input2').insertAdjacentElement("beforeend", speed_ta);
+    }
+
+    function onSpeedStart() {
+        speed_start_time = new Date();
+        test_object['speed']['start_time'] = speed_start_time;
+
+        // document.getElementById("speed_text").disabled = false;
+        document.getElementById("speed_ta").disabled = false;
+
+        let onTimeout = function() {
+            test_object['speed']['end_time'] = new Date();
+            test_object["speed"]["input"] = document.getElementById('speed_ta').value;
+            removeElementById("input2");
+
+            let button = createElementButton("save2_btn", onSave2, "保存结果");
+            let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
+            document.getElementById("save2").insertAdjacentElement("beforeend", p);
+            document.getElementById("save2").insertAdjacentElement("beforeend", button);
+        };
+        createCountdownTimer(speed_input_time_seconds, onTimeout);
+        removeElementById("speed_start_btn");
+    }
+
+    function onSave2() {
+        let filename = test_object["user_id"];
+        filename += ".stage2.txt";
+        console.log("onSave2 called filename="+filename);
+        //input = document.getElementById("speed_text").innerText
 
         let text = JSON.stringify(test_object);
         download(filename, text);
