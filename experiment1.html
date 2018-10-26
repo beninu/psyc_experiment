@@ -1,5 +1,21 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <style>
+    .button {
+      background-color: #e7e7e7;
+      /*border: none;*/
+      /*color: white;*/
+      /*padding: 15px 32px;*/
+      /*text-align: center;*/
+      /*text-decoration: none;*/
+      /*display: inline-block;*/
+      /*font-size: 16px;*/
+      /*margin: 4px 2px;*/
+      /*cursor: pointer;*/
+    }
+  </style>
+</head>
 <body>
 <p id="timer" align="center">00m 00s</p>
 <div style="width: 100%; overflow: hidden;">
@@ -15,7 +31,7 @@
   <!--<p>结束时请按保存结果按钮</p>-->
   请输入用户编号:
   <input  id="user_id" type="text"></input>
-  <button id="start_button"  onclick="onStart()">开始输入成语</button>
+  <button id="start_button" class="button" onclick="onStart()">开始输入成语</button>
 </div>
 <div id="save1"> </div>
 <div id="save2"> </div>
@@ -312,6 +328,7 @@
         button.id = buttonId;
         button.innerText = text;
         button.onclick = onClick;
+        button.classList.add("button");
         return button;
     }
 

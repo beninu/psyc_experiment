@@ -34,8 +34,8 @@
 </div>
 <div id="start">
   请输入用户编号: <input  id="user_id" type="text"></input>
-  <button id="start_button" onclick="onStart()">开始输入成语</button>
-    <!--<button id="start_button" class="button" onclick="onStart()">开始输入成语</button>-->
+  <!--<button id="start_button" onclick="onStart()">开始输入成语</button>-->
+  <button id="start_button" class="button" onclick="onStart()">开始输入成语</button>
 </div>
 <div id="stage1"> </div>
 <div id="stage2"> </div>
@@ -401,6 +401,7 @@
         button.id = buttonId;
         button.innerText = text;
         button.onclick = onClick;
+        button.classList.add("button");
         return button;
     }
 
