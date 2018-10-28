@@ -19,7 +19,8 @@
     </style>
 </head>
 <body>
-<p id="timer" style="font-size:300%;" align="center">00m 00s</p>
+<!--<p id="timer" style="font-size:300%;" align="center">00m 00s</p>-->
+<p id="timer" style="font-size:300%;" align="center"></p>
 <!--<div style="width: 100%; overflow: hidden;">-->
     <!--<p>第一阶段数字开头成语</p>-->
     <!--<ul id="s1_list">-->
@@ -125,7 +126,8 @@
         console.log("displayStage1 called");
 
 
-        let innerHTML = "<p>数字开头的成语</p>";
+        let innerHTML = "<p>前四分钟写</p>";
+         innerHTML += "<p>数字开头的成语</p>";
         innerHTML += "<p>比如: 一石二鸟 三足鼎立 百口莫辩</p>";
         // innerHTML += "<p>一石二鸟</p>";
         // innerHTML += "<p>三足鼎立</p>";
@@ -136,7 +138,8 @@
         elementLeft.innerHTML = innerHTML;
 
 
-        let innerHTML2 = "<p>非数字开头的成语</p>";
+        let innerHTML2 = "<p>后四分钟写</p>";
+        innerHTML2 += "<p>非数字开头的成语</p>";
         innerHTML2 += "<p>很多, 就不举例去限制你的思维了</p>";
         // innerHTML2 += "<p>就不举例</p>";
         // innerHTML2 += "<p>去限制你</p>";
@@ -346,9 +349,9 @@
             removeElementById("input2");
 
             let button = createElementButton("save2_btn", onSave2, "保存结果");
-            let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
-            p.id = "save2_msg";
-            document.getElementById("save2").insertAdjacentElement("beforeend", p);
+            //let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
+            //p.id = "save2_msg";
+            //document.getElementById("save2").insertAdjacentElement("beforeend", p);
             document.getElementById("save2").insertAdjacentElement("beforeend", button);
         };
         createCountdownTimer(speed_input_time_seconds, onTimeout);
@@ -370,8 +373,8 @@
         removeElementById("save2_btn");
 
         // 改变save2_msg的描述
-        p = document.getElementById("save2_msg");
-        p.innerText = "结果已保存，请向领导回复“已完成”";
+        p = createElementP("结果已保存，请向领导回复“已完成”")
+        document.getElementById("save2").insertAdjacentElement("beforeend", p);
     }
 
     // 工具类，完成一个功能，和具体的业务流程无关
