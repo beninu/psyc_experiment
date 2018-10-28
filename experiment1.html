@@ -20,6 +20,8 @@
 <body>
 <!--<p id="timer" style="font-size:30px;" align="center">00m 00s</p>-->
 <p id="timer" style="font-size:300%;" align="center">00m 00s</p>
+<div id="header" align="center">
+</div>
 <div style="width: 100%; overflow: hidden;">
   <div id="left_blank"; style="width: 25%; float: left;">
     .
@@ -72,6 +74,10 @@
     let exp_start_time;
     // 速度测试开始时间
     let speed_start_time;
+
+    // for test
+    // chengyu_input_time_seconds = 4;
+    // speed_input_time_seconds = 6;
 
     // 用来存放最后需要输出的结构
     let test_object = new Map();
@@ -177,6 +183,7 @@
             }
         });
 
+        document.getElementById('header').innerText = "请在8分钟内写出";
         document.getElementById('input1').insertAdjacentElement("beforeend", p);
         document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
         document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_button);
@@ -246,9 +253,9 @@
             removeElementById("input2");
 
             let button = createElementButton("save2_btn", onSave2, "保存结果");
-            let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
-            p.id = "save2_msg";
-            document.getElementById("save2").insertAdjacentElement("beforeend", p);
+            // let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
+            // p.id = "save2_msg";
+            // document.getElementById("save2").insertAdjacentElement("beforeend", p);
             document.getElementById("save2").insertAdjacentElement("beforeend", button);
         };
         createCountdownTimer(speed_input_time_seconds, onTimeout);
@@ -268,6 +275,7 @@
         removeElementById("save1");
         removeElementById("left");
         removeElementById("right");
+        document.getElementById('header').innerText = ""
         displaySpeedInput();
     }
 
@@ -286,8 +294,8 @@
         removeElementById("save2_btn");
 
         // 改变save2_msg的描述
-        p = document.getElementById("save2_msg");
-        p.innerText = "结果已保存，请向领导回复“已完成”";
+        p = createElementP("结果已保存，请向领导回复“已完成”");
+        document.getElementById("save2").insertAdjacentElement("beforeend", p);
     }
 
     // 工具类，完成一个功能，和具体的业务流程无关
