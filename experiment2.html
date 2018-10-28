@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+<!--<meta charset="UTF-8">-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
 <head>
     <style>
         .button {
@@ -17,7 +19,7 @@
     </style>
 </head>
 <body>
-<p id="timer" align="center">00m 00s</p>
+<p id="timer" style="font-size:300%;" align="center">00m 00s</p>
 <!--<div style="width: 100%; overflow: hidden;">-->
     <!--<p>第一阶段数字开头成语</p>-->
     <!--<ul id="s1_list">-->
@@ -27,21 +29,31 @@
     <!--</ul>-->
 <!--</div>-->
 <div style="width: 100%; overflow: hidden;">
-    <div id="left"; style="width: 50%; float: left;">
+    <div id="left_blank"; style="width: 25%; float: left;">
+        .
     </div>
-    <div id="right"; style="margin-left: 50%;">
+    <!--<div id="left"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
+    <div id="left"; style="width: 25%; float: left;">
+    </div>
+    <!--<div id="right"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
+    <div id="right"; style="width: 25%; float: left;;">
+    </div>
+    <div id="right_blank"; style="width: 25%; float: left;">
+        .
     </div>
 </div>
+<div align="center">
 <div id="start">
-  请输入用户编号: <input  id="user_id" type="text"></input>
+  请输入发放的编号: <input  id="user_id" type="text"></input>
   <!--<button id="start_button" onclick="onStart()">开始输入成语</button>-->
-  <button id="start_button" class="button" onclick="onStart()">开始输入成语</button>
+  <button id="start_button" class="button" onclick="onStart()">点击本按钮，开始实验</button>
 </div>
 <div id="stage1"> </div>
 <div id="stage2"> </div>
 <div id="input2"> </div>
 <div id="save"> </div>
 <div id="save2"> </div>
+</div>
 
 <script>
 
@@ -64,6 +76,11 @@
     let exp_start_time;
     // 速度测试开始时间
     let speed_start_time;
+
+    // for test
+    // s1_input_time_seconds = 5;
+    // s2_input_time_seconds = 5;
+    // speed_input_time_seconds = 6;
 
     // 用来存放最后需要输出的结构
     let test_object = new Map();
@@ -136,7 +153,7 @@
 
         let s1_input_box = createElementInputText("s1_input_box");
 
-        let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "提交");
+        let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "按回车提交");
 
         // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
         s1_input_box.addEventListener("keyup", function(ev) {
@@ -330,6 +347,7 @@
 
             let button = createElementButton("save2_btn", onSave2, "保存结果");
             let p = createElementP("提醒：点击\"保存\"后请到QQ回复领导Y")
+            p.id = "save2_msg";
             document.getElementById("save2").insertAdjacentElement("beforeend", p);
             document.getElementById("save2").insertAdjacentElement("beforeend", button);
         };
@@ -347,7 +365,13 @@
         download(filename, text);
 
         // 一次实验完成，重新刷新页面
-        window.location.reload(false);
+        //window.location.reload(false);
+        // 删除btn
+        removeElementById("save2_btn");
+
+        // 改变save2_msg的描述
+        p = document.getElementById("save2_msg");
+        p.innerText = "结果已保存，请向领导回复“已完成”";
     }
 
     // 工具类，完成一个功能，和具体的业务流程无关
