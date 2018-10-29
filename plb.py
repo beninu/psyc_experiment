@@ -48,7 +48,7 @@ def main(argv):
         #print s
         #print s['user_id'], s['exp']['left_list_num'], s['exp']['right_list_num'], len(s['speed']['input'])
         row = make_a_row(max_element,
-                str(s['user_id']),
+                s['user_id'],
                 str(s['exp']['left_list_num']),
                 str(s['exp']['right_list_num']),
                 str(len(s['speed']['input'])),
