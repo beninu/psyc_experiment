@@ -31,6 +31,14 @@ def make_a_row(max_element, e1, e2, e3, e4, last_list):
     #print row
     return ",".join(row)
 
+def write_bom_utf_16_le(csv):
+    # 打印csv结果
+    with open("plb.csv", "w") as f:
+        f.write(codecs.BOM_UTF16_LE);
+        for r in csv:
+            f.write(r.encode('utf-16-le'))
+            f.write('\r\n'.encode('utf-16-le'));
+
 def main(argv):
     samples = [json.loads(read_file_content(f)) for f in argv[1:]]
     max_chengyu = max([s['exp']['left_list_num']+s['exp']['right_list_num'] for s in samples])
@@ -56,12 +64,7 @@ def main(argv):
         #print row
         csv.append(row)
     print csv
-    # 打印csv结果
-    f = codecs.open("plb.csv", "w", "utf-8")
-    for r in csv:
-        f.write(r);
-        f.write('\r\n');
-    f.close()
+    write_bom_utf_16_le(csv)
 
 if __name__=="__main__":
     if len(sys.argv) == 1:
