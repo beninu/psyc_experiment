@@ -98,6 +98,9 @@
     // 非数字开头成语列表
     test_object['exp']['right_list'] = [];
 
+    let dedup_object = new Map();
+    dedup_object['left_set'] = new Set();
+    dedup_object['right_set'] = new Set();
 
     // 开始测试，并隐藏开始按钮
     function onStart() {
@@ -197,6 +200,16 @@
             console.log("text="+ text + ", text.length < 4");
             return;
         }
+        if (dedup_object['left_set'].has(text)) {
+            console.log("text="+ text + ", duplicated chengyu in left list");
+            alert(text + "是重复成语");
+            return;
+        }
+        if (dedup_object['right_set'].has(text)) {
+            console.log("text="+ text + ", duplicated chengyu in right list");
+            alert(text + "是重复成语");
+            return;
+        }
         let found = isQualifiedChengYu(text);
         if (!found) {
             // 第一阶段，非数字开头的成语被忽略
@@ -205,6 +218,7 @@
 
         let l = document.createElement("li");
         l.innerText = text;
+        dedup_object['left_set'].add(text);
 
         let list = document.getElementById("left_list");
         let sample = [];
@@ -263,6 +277,16 @@
             console.log("text="+ text + ", text.length < 4");
             return;
         }
+        if (dedup_object['left_set'].has(text)) {
+            console.log("text="+ text + ", duplicated chengyu in left list");
+            alert(text + "是重复成语");
+            return;
+        }
+        if (dedup_object['right_set'].has(text)) {
+            console.log("text="+ text + ", duplicated chengyu in right list");
+            alert(text + "是重复成语");
+            return;
+        }
         let found = isQualifiedChengYu(text);
         if (found) {
             // 第二阶段，数字开头的成语被忽略
@@ -271,6 +295,7 @@
 
         let l = document.createElement("li");
         l.innerText = text;
+        dedup_object['right_set'].add(text);
 
         let list = document.getElementById("right_list");
         let sample = [];
