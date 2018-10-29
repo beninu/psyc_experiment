@@ -95,6 +95,9 @@
     test_object['exp']['right_list'] = [];
     test_object['type'] = '实验一';
 
+    let dedup_object = new Map();
+    dedup_object['left_set'] = new Set();
+    dedup_object['right_set'] = new Set();
 
     // 开始测试，并隐藏开始按钮
     function onStart() {
@@ -141,9 +144,21 @@
         let text = t.value;
         if (text.length < 4) {
             console.log("text="+ text + ", text.length < 4");
+            alert(text + " 小于四个字");
+            return;
+        }
+        if (dedup_object['left_set'].has(text)) {
+            console.log("text="+ text + ", duplicated chengyu in left list");
+            alert(text + "是重复成语");
+            return;
+        }
+        if (dedup_object['right_set'].has(text)) {
+            console.log("text="+ text + ", duplicated chengyu in right list");
+            alert(text + "是重复成语");
             return;
         }
         let found = isQualifiedChengYu(text);
+
 
         let l = document.createElement("li");
         l.innerText = text;
@@ -156,10 +171,12 @@
             test_object['exp']['left_list'].push(sample);
             // console.log(text + " find num");
             list = document.getElementById("left_list");
+            dedup_object['left_set'].add(text);
         } else {
             test_object['exp']['right_list'].push(sample);
             // console.log(text + " not find num");
             list = document.getElementById("right_list");
+            dedup_object['right_set'].add(text);
         }
         list.insertAdjacentElement("beforeend", l);
         t.value = "";
