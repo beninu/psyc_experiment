@@ -79,9 +79,9 @@
     let speed_start_time;
 
     // for test
-    // s1_input_time_seconds = 5;
-    // s2_input_time_seconds = 5;
-    // speed_input_time_seconds = 6;
+    s1_input_time_seconds = 5;
+    s2_input_time_seconds = 5;
+    speed_input_time_seconds = 6;
 
     // 用来存放最后需要输出的结构
     let test_object = new Map();
@@ -130,7 +130,7 @@
 
 
         let innerHTML = "<p>前四分钟写</p>";
-         innerHTML += "<p>数字开头的成语</p>";
+        innerHTML += "<p>数字开头的成语</p>";
         innerHTML += "<p>比如: 一石二鸟 三足鼎立 百口莫辩</p>";
         // innerHTML += "<p>一石二鸟</p>";
         // innerHTML += "<p>三足鼎立</p>";
@@ -153,16 +153,15 @@
         elementRight.innerHTML = innerHTML2;
 
 
-
         let innerText = "输入一个成语，回车即可";
         let p = createElementP(innerText);
 
         let s1_input_box = createElementInputText("s1_input_box");
 
-        let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "按回车提交");
+        let s1_start_btn = createElementButton("s1_start_btn", onStage1Start, "开始输入");
 
         // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
-        s1_input_box.addEventListener("keyup", function(ev) {
+        s1_input_box.addEventListener("keyup", function (ev) {
             console.log("event called");
             ev.preventDefault();
             if (ev.keyCode === 13) {
@@ -172,7 +171,13 @@
 
         document.getElementById('stage1').insertAdjacentElement("beforeend", p);
         document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_box);
-        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_btn);
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_start_btn);
+        document.getElementById('timer').innerText = "4m 05s";
+
+    }
+
+    function onStage1Start() {
+        removeElementById("s1_start_btn");
 
         let onStage1Timeout = function() {
             test_object['exp']['stage1_end_time'] = new Date();
@@ -182,6 +187,9 @@
 
         // 设置倒计时，时间到了执行 onTimeout
         createCountdownTimer(s1_input_time_seconds, onStage1Timeout);
+
+        let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "按回车提交");
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_btn);
     }
 
 
@@ -237,7 +245,7 @@
 
         let s2_input_box = createElementInputText("s2_input_box");
 
-        let s2_input_btn = createElementButton("s2_input_btn", onStage2Input, "提交");
+        let s2_input_btn = createElementButton("s2_input_btn", onStage2Input, "按回车提交");
 
         // 把input text元素的回车键变成button元素的鼠标点击事件
         s2_input_box.addEventListener("keyup", function(ev) {
