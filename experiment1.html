@@ -40,12 +40,8 @@
 
 <div align="center">
   <div id="start">
-    <!--<p>点击开始按钮开始实验</p>-->
-    <!--<p>时间八分钟</p>-->
-    <!--<p>实验期间不要刷新页面，否则结果会丢失</p>-->
-    <!--<p>结束时请按保存结果按钮</p>-->
     请输入发放的编号:
-    <input  id="user_id" type="text"></input>
+    <input id="user_id" type="text"></input>
     <button id="start_button" class="button" onclick="onStart()">点击本按钮，开始实验</button>
   </div>
   <div id="save1"> </div>
@@ -115,15 +111,6 @@
 
         test_object['user_id'] = user_id;
 
-        let onTimeout = function() {
-            test_object['exp']['end_time'] = new Date();
-            removeElementById("input1");
-            displayButton("save1", onSave1, "保存成语结果");
-        };
-
-        // 设置倒计时，时间到了执行 onTimeout
-        createCountdownTimer(chengyu_input_time_seconds, onTimeout);
-
         // 隐藏 start_button
         removeElementById("start");
 
@@ -191,7 +178,7 @@
 
         let chengyu_text = createElementInputText("chengyu_text");
 
-        let chengyu_button = createElementButton("chengyu_button", onChengyuInput, "按回车提交");
+        let start_button = createElementButton("start_button", onChengyuInputStart, "开始输入");
 
         // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
         chengyu_text.addEventListener("keyup", function(ev) {
@@ -205,7 +192,7 @@
         document.getElementById('header').innerText = "请在8分钟内写出";
         document.getElementById('input1').insertAdjacentElement("beforeend", p);
         document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
-        document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_button);
+        document.getElementById('input1').insertAdjacentElement("beforeend", start_button);
 
         let innerHTML = "<p>数字开头的成语</p>";
         innerHTML += "<p>比如: 一石二鸟 三足鼎立 百口莫辩</p>";
@@ -227,6 +214,25 @@
 
         let elementRight = document.getElementById('right');
         elementRight.innerHTML = innerHTML2;
+
+        let timer = document.getElementById('timer');
+        timer.innerText = "00m 00s";
+    }
+
+    function onChengyuInputStart() {
+        removeElementById('start_button');
+        let chengyu_button = createElementButton("chengyu_button", onChengyuInput, "按回车提交");
+        document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_button);
+        let onTimeout = function() {
+            test_object['exp']['end_time'] = new Date();
+            removeElementById("input1");
+            displayButton("save1", onSave1, "保存成语结果");
+        };
+
+        // 设置倒计时，时间到了执行 onTimeout
+        createCountdownTimer(chengyu_input_time_seconds, onTimeout);
+
+
     }
 
     function displaySpeedInput() {
