@@ -60,7 +60,7 @@
     window.onBeforeUnload = function () { return false;};
     document.onselectstart = function () { return false;};
 
-
+    document.getElementById('user_id').focus();
 
     // 全局数据结构
     // 输入成语的时间，单位秒
@@ -191,8 +191,8 @@
 
         document.getElementById('header').innerText = "请在8分钟内写出";
         document.getElementById('input1').insertAdjacentElement("beforeend", p);
-        document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
         document.getElementById('input1').insertAdjacentElement("beforeend", start_button);
+        document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
 
         let innerHTML = "<p>数字开头的成语</p>";
         innerHTML += "<p>比如: 一石二鸟 三足鼎立 百口莫辩</p>";
@@ -229,8 +229,10 @@
             displayButton("save1", onSave1, "保存成语结果");
         };
 
+
         // 设置倒计时，时间到了执行 onTimeout
         createCountdownTimer(chengyu_input_time_seconds, onTimeout);
+        document.getElementById('chengyu_text').focus();
 
 
     }
