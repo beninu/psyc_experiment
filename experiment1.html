@@ -1,21 +1,43 @@
 <!DOCTYPE html>
 <head>
-  <!--<meta charset="UTF-8">-->
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
-  <style>
-    .button {
-      background-color: #e7e7e7;
-      /*border: none;*/
-      /*color: white;*/
-      /*padding: 15px 32px;*/
-      /*text-align: center;*/
-      /*text-decoration: none;*/
-      /*display: inline-block;*/
-      /*font-size: 16px;*/
-      /*margin: 4px 2px;*/
-      /*cursor: pointer;*/
-    }
-  </style>
+    <!--<meta charset="UTF-8">-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+    <style>
+        .button {
+            background-color: #e7e7e7;
+        }
+        /* Create two columns/boxes that floats next to each other */
+        c1 {
+            float: left;
+            width: 20%;
+            padding: 20px;
+        }
+        c2 {
+            float: left;
+            width: 50%;
+            padding: 20px;
+        }
+        c3 {
+            float: left;
+            width: 20%;
+            padding: 20px;
+        }
+
+
+        /* Clear floats after the columns */
+        section:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        @media () {
+            c1, c2, c3 {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
 </head>
 <body>
 <!--<p id="timer" style="font-size:30px;" align="center">00m 00s</p>-->
@@ -24,32 +46,71 @@
 <div id="header" align="center">
 </div>
 <div style="width: 100%; overflow: hidden;">
-  <div id="left_blank"; style="width: 25%; float: left;">
-    .
-  </div>
-  <!--<div id="left"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
-  <div id="left"; style="width: 25%; float: left;">
-  </div>
-  <!--<div id="right"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
-  <div id="right"; style="width: 25%; float: left;;">
-  </div>
-  <div id="right_blank"; style="width: 25%; float: left;">
-    .
-  </div>
+    <div id="left_blank"; style="width: 25%; float: left;">
+        .
+    </div>
+    <!--<div id="left"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
+    <div id="left"; style="width: 25%; float: left;">
+    </div>
+    <!--<div id="right"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
+    <div id="right"; style="width: 25%; float: left;;">
+    </div>
+    <div id="right_blank"; style="width: 25%; float: left;">
+        .
+    </div>
 </div>
 
 <div align="center">
-  <div id="start">
-    请输入发放的编号:
-    <input id="user_id" type="text"></input>
-    <button id="start_button" class="button" onclick="onStart()">点击本按钮，开始实验</button>
-  </div>
-  <div id="save1"> </div>
-  <div id="save2"> </div>
-  <div id="input1"> </div>
-  <div id="input2">
-  <div id="speed_start"> </div>
-  </div>
+    <section>
+        <c1></c1>
+        <c2>
+            <div id='lingdao_radio' align="left">
+                <legend>你的领导在任务布置中表现出什么样的做事方式？</legend>
+                <p> 请选择:</p>
+
+                <div>
+                    <input type="radio" id="option1" name="drone" value="1"/>
+                    他对任务的要求高，且允许灵活性
+                </div>
+
+                <div>
+                    <input type="radio" id="option2" name="drone" value="2" />
+                    他对任务的要求高，且不允许灵活性
+                </div>
+
+                <div>
+                    <input type="radio" id="option3" name="drone" value="3" />
+                    他对任务没什么要求，且允许灵活性
+                </div>
+                <div>
+                    <input type="radio" id="option4" name="drone" value="4" />
+                    他对任务没什么要求，且不允许灵活性
+                </div>
+            </div>
+        </c2>
+        <c3></c3>
+    </section>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <section>
+        <c1></c1>
+        <c2>
+            <div id="start" align="left">
+                请输入发放的编号:
+                <input id="user_id" type="text"></input>
+                <button id="start_button" class="button" onclick="onStart()">点击本按钮，开始实验</button>
+            </div>
+        </c2>
+        <c3></c3>
+    </section>
+    <div id="save1"> </div>
+    <div id="save2"> </div>
+    <div id="input1"> </div>
+    <div id="input2">
+        <div id="speed_start"> </div>
+    </div>
 </div>
 
 <script>
@@ -108,14 +169,37 @@
             alert("编号不能为空") ;
             return;
         }
+        let checked_value = checkRadio();
+        if (checked_value == "0") {
+            alert("尚未选择") ;
+            return;
+        }
+        test_object['xuanze'] = checked_value;
+
 
         test_object['user_id'] = user_id;
 
         // 隐藏 start_button
         removeElementById("start");
-
+        removeElementById('lingdao_radio');
         // 显示输入button
         displayChengyuInput();
+    }
+
+    function checkRadio() {
+        if (document.getElementById('option1').checked) {
+            return "1";
+        }
+        if (document.getElementById('option2').checked) {
+            return "2";
+        }
+        if (document.getElementById('option3').checked) {
+            return "3";
+        }
+        if (document.getElementById('option4').checked) {
+            return "4";
+        }
+        return "0";
     }
 
 
