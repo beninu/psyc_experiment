@@ -102,6 +102,9 @@
     dedup_object['left_set'] = new Set();
     dedup_object['right_set'] = new Set();
 
+    document.getElementById('user_id').focus();
+
+
     // 开始测试，并隐藏开始按钮
     function onStart() {
         exp_start_time = new Date();
@@ -170,9 +173,9 @@
         });
 
         document.getElementById('stage1').insertAdjacentElement("beforeend", p);
-        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_box);
         document.getElementById('stage1').insertAdjacentElement("beforeend", s1_start_btn);
-        document.getElementById('timer').innerText = "4m 05s";
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_box);
+        document.getElementById('timer').innerText = "4m 00s";
 
     }
 
@@ -190,6 +193,7 @@
 
         let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "按回车提交");
         document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_btn);
+        document.getElementById('s1_input_box').focus();
     }
 
 
@@ -240,6 +244,7 @@
 
     function displayStage2() {
         console.log("displayStage2 called");
+        document.getElementById('timer').innerText = "4m 00s";
         let innerText = "输入一个成语，回车即可";
         let p = createElementP(innerText);
 
@@ -268,6 +273,7 @@
 
         // 设置倒计时，时间到了执行 onTimeout
         createCountdownTimer(s2_input_time_seconds, onStage2Timeout);
+        s2_input_box.focus();
     }
 
     function onStage2Input() {
