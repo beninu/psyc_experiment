@@ -74,11 +74,11 @@
         <c3></c3>
     </section>
     <div id="stage1"> </div>
+    <div id="save1"> </div>
     <div id="stage2"> </div>
-    <div id="stage3"> </div>
-    <div id="input2"> </div>
-    <div id="save"> </div>
     <div id="save2"> </div>
+    <div id="stage3"> </div>
+    <div id="save3"> </div>
 </div>
 
 <script>
@@ -99,9 +99,9 @@
     let exp_start_time;
 
     // for test
-    s1_input_time_seconds = 5;
-    s2_input_time_seconds = 5;
-    s3_input_time_seconds = 5;
+    // s1_input_time_seconds = 5;
+    // s2_input_time_seconds = 5;
+    // s3_input_time_seconds = 5;
 
     // 用来存放最后需要输出的结构
     let test_object = new Map();
@@ -156,7 +156,6 @@
     function displayStage1() {
         console.log("displayStage1 called");
 
-
         let innerHTML = "<p>d开头的4个字母</p>";
         innerHTML += '<ul id=\"left_list\"></ul>'
 
@@ -178,14 +177,6 @@
 
         let s1_start_btn = createElementButton("s1_start_btn", onStage1Start, "开始输入");
 
-        // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
-        s1_input_box.addEventListener("keyup", function (ev) {
-            console.log("event called");
-            ev.preventDefault();
-            if (ev.keyCode === 13) {
-                s1_input_btn.click();
-            }
-        });
 
         document.getElementById('stage1').insertAdjacentElement("beforeend", p);
         document.getElementById('stage1').insertAdjacentElement("beforeend", s1_start_btn);
@@ -198,9 +189,9 @@
         removeElementById("s1_start_btn");
 
         let onStage1Timeout = function() {
-            test_object['stage1_end_time'] = new Date();
+            test_object['stage1']['end_time'] = new Date();
             removeElementById("stage1");
-            displayStage2()
+            displaySave1()
         };
 
         // 设置倒计时，时间到了执行 onTimeout
@@ -208,9 +199,10 @@
 
         let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "按回车提交");
         document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_btn);
-        document.getElementById('s1_input_box').focus();
+        let s1_input_box = document.getElementById('s1_input_box');
+        s1_input_box.focus();
+        clickToEnter(s1_input_box, s1_input_btn);
     }
-
 
     function onStage1Input() {
         console.log("onStage1Input called");
@@ -244,6 +236,25 @@
         t.focus();
     }
 
+    function displaySave1() {
+        // displayButton("save", onSave, "保存实验结果");
+        let button = createElementButton("save_btn", onSave1, "保存实验结果");
+        document.getElementById("save1").insertAdjacentElement("beforeend", button);
+    }
+
+    function onSave1() {
+        removeElementById('left_list');
+        let filename = test_object["user_id"];
+        filename += ".stage1.txt";
+        console.log("onSave1 called filename="+filename);
+
+        let text = JSON.stringify(test_object);
+        download(filename, text);
+
+        removeElementById('save1');
+        displayStage2();
+    }
+
     function displayStage2() {
         console.log("displayStage2 called");
         document.getElementById('timer').innerText = "0m 30s";
@@ -252,30 +263,31 @@
 
         let s2_input_box = createElementInputText("s2_input_box");
 
-        let s2_input_btn = createElementButton("s2_input_btn", onStage2Input, "按回车提交");
-
-        // 把input text元素的回车键变成button元素的鼠标点击事件
-        s2_input_box.addEventListener("keyup", function(ev) {
-            console.log("event called");
-            ev.preventDefault();
-            if (ev.keyCode === 13) {
-                s2_input_btn.click();
-            }
-        });
+        let s2_start_btn = createElementButton("s2_start_btn", onStage2Start, "开始输入");
 
         document.getElementById('stage2').insertAdjacentElement("beforeend", p);
+        document.getElementById('stage2').insertAdjacentElement("beforeend", s2_start_btn);
         document.getElementById('stage2').insertAdjacentElement("beforeend", s2_input_box);
-        document.getElementById('stage2').insertAdjacentElement("beforeend", s2_input_btn);
+    }
+
+    function onStage2Start() {
+        removeElementById("s2_start_btn");
 
         let onStage2Timeout = function() {
-            test_object['exp']['stage1_end_time'] = new Date();
+            test_object['stage2']['end_time'] = new Date();
             removeElementById("stage2");
-            displayStage3()
+            displaySave2()
         };
 
         // 设置倒计时，时间到了执行 onTimeout
         createCountdownTimer(s2_input_time_seconds, onStage2Timeout);
+
+        let s2_input_btn = createElementButton("s2_input_btn", onStage2Input, "按回车提交");
+        document.getElementById('stage2').insertAdjacentElement("beforeend", s2_input_btn);
+        let s2_input_box = document.getElementById('s2_input_box');
         s2_input_box.focus();
+        clickToEnter(s2_input_box, s2_input_btn);
+
     }
 
     function onStage2Input() {
@@ -312,15 +324,50 @@
         t.focus();
     }
 
+    function displaySave2() {
+        let save2_btn = createElementButton("save2_btn", onSave2, "保存实验结果");
+        document.getElementById("save2").insertAdjacentElement("beforeend", save2_btn);
+    }
+
+    function onSave2() {
+        removeElementById('right_list');
+        let filename = test_object["user_id"];
+        filename += ".stage2.txt";
+        console.log("onSave2 called filename="+filename);
+        //input = document.getElementById("speed_text").innerText
+
+        let text = JSON.stringify(test_object);
+        download(filename, text);
+
+        removeElementById("save2");
+        displayStage3();
+    }
+
     function displayStage3() {
         console.log("displayStage3 called");
         document.getElementById('timer').innerText = "0m 45s";
+
+        let innerHTML = "<p>d开头的4个字母</p>";
+        innerHTML += '<ul id=\"left_list\"></ul>'
+
+        let elementLeft = document.getElementById('left');
+        elementLeft.innerHTML = innerHTML;
+
+
+        let innerHTML2 = "<p>非d开头的4个字母</p>";
+        innerHTML2 += '<ul id=\"right_list\"></ul>'
+
+        let elementRight = document.getElementById('right');
+        elementRight.innerHTML = innerHTML2;
+
+
+
         let innerText = "请输入4个字母，45s，回车即可";
         let p = createElementP(innerText);
 
         let s3_input_box = createElementInputText("s3_input_box");
 
-        let s3_input_btn = createElementButton("s3_input_btn", onStage3Input, "按回车提交");
+        let s3_start_btn = createElementButton("s3_start_btn", onStage3Start, "开始输入");
 
         // 把input text元素的回车键变成button元素的鼠标点击事件
         s3_input_box.addEventListener("keyup", function(ev) {
@@ -332,28 +379,37 @@
         });
 
         document.getElementById('stage3').insertAdjacentElement("beforeend", p);
+        document.getElementById('stage3').insertAdjacentElement("beforeend", s3_start_btn);
         document.getElementById('stage3').insertAdjacentElement("beforeend", s3_input_box);
-        document.getElementById('stage3').insertAdjacentElement("beforeend", s3_input_btn);
+
+    }
+
+    function onStage3Start() {
+        removeElementById('s3_start_btn');
 
         let onStage3Timeout = function() {
-            test_object['exp']['stage2_end_time'] = new Date();
-            removeElementById("stage2");
-            displaySave()
+            test_object['stage3']['end_time'] = new Date();
+            removeElementById("stage3");
+            displaySave3()
         };
 
         // 设置倒计时，时间到了执行 onTimeout
         createCountdownTimer(s3_input_time_seconds, onStage3Timeout);
+        let s3_input_btn = createElementButton("s3_input_btn", onStage3Input, "按回车提交");
+        document.getElementById('stage3').insertAdjacentElement("beforeend", s3_input_btn);
+        let s3_input_box = document.getElementById('s3_input_box');
         s3_input_box.focus();
+        clickToEnter(s3_input_box, s3_input_btn);
     }
 
-    function displaySave() {
+    function displaySave3() {
         // displayButton("save", onSave, "保存实验结果");
-        let button = createElementButton("save_btn", onSave1, "保存实验结果");
-        document.getElementById("save").insertAdjacentElement("beforeend", button);
+        let save3_btn = createElementButton("save3_btn", onSave3, "保存实验结果");
+        document.getElementById("save3").insertAdjacentElement("beforeend", save3_btn);
     }
 
     function onStage3Input() {
-        console.log("onStage2Input called");
+        console.log("onStage3Input called");
         let now = new Date();
         console.log("elapsed seconds="+(now-exp_start_time)/1000);
 
@@ -361,7 +417,7 @@
             console.log("time's up");
             return;
         }
-        let t = document.getElementById("s2_input_box");
+        let t = document.getElementById("s3_input_box");
         let text = t.value;
         if (text.length < 4) {
             console.log("text="+ text + ", text.length < 4");
@@ -378,11 +434,11 @@
 
         let list;
         if (initialWithd) {
-            list = document.getElementById("right_list");
-            test_object['stage3']['right_list'].push(sample);
-        } else {
             list = document.getElementById("left_list");
             test_object['stage3']['left_list'].push(sample);
+        } else {
+            list = document.getElementById("right_list");
+            test_object['stage3']['right_list'].push(sample);
         }
 
         list.insertAdjacentElement("beforeend", l);
@@ -390,40 +446,25 @@
         t.focus();
     }
 
-
-    function onSave1() {
-        // test_object['exp']['left_list_num'] = test_object['exp']['left_list'].length;
-        // test_object['exp']['right_list_num'] = test_object['exp']['right_list'].length;
-        let filename = test_object["user_id"];
-        filename += ".stage1.txt";
-        console.log("onSave1 called filename="+filename);
-
-        let text = JSON.stringify(test_object);
-        download(filename, text);
+    function onSave3() {
         removeElementById('left');
         removeElementById('right');
-        removeElementById('save');
-        displaySpeedInput();
-    }
-
-    function onSave2() {
+        removeElementById('save3_btn');
+        document.getElementById("timer").innerHTML = "";
         let filename = test_object["user_id"];
-        filename += ".stage2.txt";
-        console.log("onSave2 called filename="+filename);
-        //input = document.getElementById("speed_text").innerText
+        filename += ".stage3.txt";
+        console.log("onSave3 called filename="+filename);
 
         let text = JSON.stringify(test_object);
         download(filename, text);
 
-        // 一次实验完成，重新刷新页面
-        //window.location.reload(false);
-        // 删除btn
-        removeElementById("save2_btn");
-
         // 改变save2_msg的描述
-        p = createElementP("结果已保存，请向领导回复“已完成”")
-        document.getElementById("save2").insertAdjacentElement("beforeend", p);
+        p = createElementP("结果已保存，请向领导回复“已完成”");
+        document.getElementById("save3").insertAdjacentElement("beforeend", p);
     }
+
+
+
 
     // 工具类，完成一个功能，和具体的业务流程无关
     function download(filename, text) {
@@ -555,6 +596,17 @@
             }
         }
         return found;
+    }
+
+    // 把input text元素的回车键变成button元素的鼠标点击事件
+    function clickToEnter(input_text_box, btn) {
+        input_text_box.addEventListener("keyup", function (ev) {
+            console.log("event called");
+            ev.preventDefault();
+            if (ev.keyCode === 13) {
+                btn.click();
+            }
+        });
     }
 
 
