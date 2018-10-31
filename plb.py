@@ -19,12 +19,13 @@ def read_file_content(filename):
     with open(filename, 'r') as f:
         return f.read()
 
-def make_a_row(max_element, e1, e2, e3, e4, last_list):
+def make_a_row(max_element, e1, e2, e3, e4, e5, last_list):
     row = [""]*max_element
     row[0] = e1
     row[1] = e2
     row[2] = e3
     row[3] = e4
+    row[4] = e5
     for idx,val in enumerate(last_list):
         row[idx+4] = val
     #row = [str(e) for e in row]
@@ -43,9 +44,10 @@ def main(argv):
     samples = [json.loads(read_file_content(f)) for f in argv[1:]]
     max_chengyu = max([s['exp']['left_list_num']+s['exp']['right_list_num'] for s in samples])
     #print max_chengyu
-    max_element =  4 + max_chengyu
+    max_element =  5 + max_chengyu
     csv = []
     row = make_a_row(max_element, 'code',
+            'xuanze',
             'number_of_chengyu_starts_with_number',
             'number_of_chengyu_starts_without_number',
             "number_of_speed_input_character",
@@ -57,14 +59,16 @@ def main(argv):
         #print s['user_id'], s['exp']['left_list_num'], s['exp']['right_list_num'], len(s['speed']['input'])
         row = make_a_row(max_element,
                 s['user_id'],
+                s['xuanze'],
                 str(s['exp']['left_list_num']),
                 str(s['exp']['right_list_num']),
                 str(len(s['speed']['input'])),
                 [k[0] for k in s['exp']['left_list']] + [k[0] for k in s['exp']['right_list']])
         #print row
         csv.append(row)
-    print csv
+    #print csv
     write_bom_utf_16_le(csv)
+    print "processing done, please import plb.csv into excel"
 
 if __name__=="__main__":
     if len(sys.argv) == 1:
