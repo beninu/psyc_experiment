@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<!--<meta charset="UTF-8">-->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+<head>
+    <style>
+        .button {
+            background-color: #e7e7e7;
+        }
+        /* Create two columns/boxes that floats next to each other */
+        c1 {
+            float: left;
+            width: 20%;
+            padding: 20px;
+        }
+        c2 {
+            float: left;
+            width: 50%;
+            padding: 20px;
+        }
+        c3 {
+            float: left;
+            width: 20%;
+            padding: 20px;
+        }
+
+
+        /* Clear floats after the columns */
+        section:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        @media () {
+            c1, c2, c3 {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<!--<p id="timer" style="font-size:300%;" align="center">00m 00s</p>-->
+<p id="timer" style="font-size:300%;" align="center"></p>
+<div style="width: 100%; overflow: hidden;">
+    <div id="left_blank"; style="width: 25%; float: left;">
+        .
+    </div>
+    <!--<div id="left"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
+    <div id="left"; style="width: 25%; float: left;">
+    </div>
+    <!--<div id="right"; style="width: 25%; float: left; border-style: solid; border-width: 1px;">-->
+    <div id="right"; style="width: 25%; float: left;;">
+    </div>
+    <div id="right_blank"; style="width: 25%; float: left;">
+        .
+    </div>
+</div>
+<div align="center">
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <section>
+        <c1></c1>
+        <c2>
+            <div id="start" align="left">
+                请输入发放的编号: <input  id="user_id" type="text"></input>
+                <!--<button id="start_button" onclick="onStart()">开始输入成语</button>-->
+                <button id="start_button" class="button" onclick="onStart()">点击本按钮，开始实验</button>
+            </div>
+        </c2>
+        <c3></c3>
+    </section>
+    <div id="stage1"> </div>
+    <div id="stage2"> </div>
+    <div id="stage3"> </div>
+    <div id="input2"> </div>
+    <div id="save"> </div>
+    <div id="save2"> </div>
+</div>
+
+<script>
+
+    console.log("init called");
+
+    // 刷新页面时提出警告
+    window.onBeforeUnload = function () { return false;};
+    document.onselectstart = function () { return false;};
+
+
+
+    // 全局数据结构
+    let s1_input_time_seconds = 30;
+    let s2_input_time_seconds = 30;
+    let s3_input_time_seconds = 40;
+    // 实验开始时间
+    let exp_start_time;
+
+    // for test
+    s1_input_time_seconds = 5;
+    s2_input_time_seconds = 5;
+    s3_input_time_seconds = 5;
+
+    // 用来存放最后需要输出的结构
+    let test_object = new Map();
+
+    // 页面打开时间
+    test_object['page_start_time'] = new Date();
+    test_object['type'] = '练习';
+    // 实验结果数据
+    test_object['stage1'] = new Map();
+    test_object['stage2'] = new Map();
+    test_object['stage3'] = new Map();
+
+    test_object['stage1']['left_list'] = [];
+    test_object['stage1']['right_list'] = [];
+    test_object['stage2']['left_list'] = [];
+    test_object['stage2']['right_list'] = [];
+    test_object['stage3']['left_list'] = [];
+    test_object['stage3']['right_list'] = [];
+    // d开头字母表
+
+
+    // let dedup_object = new Map();
+    // dedup_object['stage1'] = new Set();
+    // dedup_object['stage2'] = new Set();
+
+    document.getElementById('user_id').focus();
+
+
+    // 开始测试，并隐藏开始按钮
+    function onStart() {
+        exp_start_time = new Date();
+        test_object['start_time'] = exp_start_time;
+
+        // 读取用户id
+        let user_id = document.getElementById("user_id").value;
+
+        // 防止空id
+        if (user_id.length < 1) {
+            return;
+        }
+
+        test_object['user_id'] = user_id;
+
+
+        // 隐藏 start_button
+        removeElementById("start");
+
+        // 显示输入button
+        displayStage1();
+    }
+
+    function displayStage1() {
+        console.log("displayStage1 called");
+
+
+        let innerHTML = "<p>d开头的4个字母</p>";
+        innerHTML += '<ul id=\"left_list\"></ul>'
+
+        let elementLeft = document.getElementById('left');
+        elementLeft.innerHTML = innerHTML;
+
+
+        let innerHTML2 = "<p>非d开头的4个字母</p>";
+        innerHTML2 += '<ul id=\"right_list\"></ul>'
+
+        let elementRight = document.getElementById('right');
+        elementRight.innerHTML = innerHTML2;
+
+
+        let innerText = "请输入d开头的4个字母，30s，回车即可";
+        let p = createElementP(innerText);
+
+        let s1_input_box = createElementInputText("s1_input_box");
+
+        let s1_start_btn = createElementButton("s1_start_btn", onStage1Start, "开始输入");
+
+        // 把chengyu_text元素的回车键变成chengyu_button元素的鼠标点击事件
+        s1_input_box.addEventListener("keyup", function (ev) {
+            console.log("event called");
+            ev.preventDefault();
+            if (ev.keyCode === 13) {
+                s1_input_btn.click();
+            }
+        });
+
+        document.getElementById('stage1').insertAdjacentElement("beforeend", p);
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_start_btn);
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_box);
+        document.getElementById('timer').innerText = "0m 30s";
+
+    }
+
+    function onStage1Start() {
+        removeElementById("s1_start_btn");
+
+        let onStage1Timeout = function() {
+            test_object['stage1_end_time'] = new Date();
+            removeElementById("stage1");
+            displayStage2()
+        };
+
+        // 设置倒计时，时间到了执行 onTimeout
+        createCountdownTimer(s1_input_time_seconds, onStage1Timeout);
+
+        let s1_input_btn = createElementButton("s1_input_btn", onStage1Input, "按回车提交");
+        document.getElementById('stage1').insertAdjacentElement("beforeend", s1_input_btn);
+        document.getElementById('s1_input_box').focus();
+    }
+
+
+    function onStage1Input() {
+        console.log("onStage1Input called");
+        let now = new Date();
+        console.log("elapsed seconds="+(now-exp_start_time)/1000);
+
+        let t = document.getElementById("s1_input_box");
+        let text = t.value;
+        if (text.length < 4) {
+            console.log("text="+ text + ", text.length < 4");
+            return;
+        }
+
+        let got = startsWithd(text);
+        if (!got) {
+            // 第一阶段，非d开头的被忽略
+            return;
+        }
+
+        let l = document.createElement("li");
+        l.innerText = text;
+        //dedup_object['left_set'].add(text);
+
+        let list = document.getElementById("left_list");
+        let sample = [];
+        sample.push(text);
+        sample.push(now);
+        test_object['stage1']['left_list'].push(sample);
+        list.insertAdjacentElement("beforeend", l);
+        t.value = "";
+        t.focus();
+    }
+
+    function displayStage2() {
+        console.log("displayStage2 called");
+        document.getElementById('timer').innerText = "0m 30s";
+        let innerText = "请输入非d开头的4个字母，30s，回车即可";
+        let p = createElementP(innerText);
+
+        let s2_input_box = createElementInputText("s2_input_box");
+
+        let s2_input_btn = createElementButton("s2_input_btn", onStage2Input, "按回车提交");
+
+        // 把input text元素的回车键变成button元素的鼠标点击事件
+        s2_input_box.addEventListener("keyup", function(ev) {
+            console.log("event called");
+            ev.preventDefault();
+            if (ev.keyCode === 13) {
+                s2_input_btn.click();
+            }
+        });
+
+        document.getElementById('stage2').insertAdjacentElement("beforeend", p);
+        document.getElementById('stage2').insertAdjacentElement("beforeend", s2_input_box);
+        document.getElementById('stage2').insertAdjacentElement("beforeend", s2_input_btn);
+
+        let onStage2Timeout = function() {
+            test_object['exp']['stage1_end_time'] = new Date();
+            removeElementById("stage2");
+            displayStage3()
+        };
+
+        // 设置倒计时，时间到了执行 onTimeout
+        createCountdownTimer(s2_input_time_seconds, onStage2Timeout);
+        s2_input_box.focus();
+    }
+
+    function onStage2Input() {
+        console.log("onStage2Input called");
+        let now = new Date();
+        console.log("elapsed seconds="+(now-exp_start_time)/1000);
+
+        if ((now -exp_start_time) > 480*1000) {
+            console.log("time's up");
+            return;
+        }
+        let t = document.getElementById("s2_input_box");
+        let text = t.value;
+        if (text.length < 4) {
+            console.log("text="+ text + ", text.length < 4");
+            return;
+        }
+        let got = startsWithd(text);
+        if (got) {
+            // 第一阶段，d开头的被忽略
+            return;
+        }
+
+        let l = document.createElement("li");
+        l.innerText = text;
+
+        let list = document.getElementById("right_list");
+        let sample = [];
+        sample.push(text);
+        sample.push(now);
+        test_object['stage2']['right_list'].push(sample);
+        list.insertAdjacentElement("beforeend", l);
+        t.value = "";
+        t.focus();
+    }
+
+    function displayStage3() {
+        console.log("displayStage3 called");
+        document.getElementById('timer').innerText = "0m 45s";
+        let innerText = "请输入4个字母，45s，回车即可";
+        let p = createElementP(innerText);
+
+        let s3_input_box = createElementInputText("s3_input_box");
+
+        let s3_input_btn = createElementButton("s3_input_btn", onStage3Input, "按回车提交");
+
+        // 把input text元素的回车键变成button元素的鼠标点击事件
+        s3_input_box.addEventListener("keyup", function(ev) {
+            console.log("event called");
+            ev.preventDefault();
+            if (ev.keyCode === 13) {
+                s3_input_btn.click();
+            }
+        });
+
+        document.getElementById('stage3').insertAdjacentElement("beforeend", p);
+        document.getElementById('stage3').insertAdjacentElement("beforeend", s3_input_box);
+        document.getElementById('stage3').insertAdjacentElement("beforeend", s3_input_btn);
+
+        let onStage3Timeout = function() {
+            test_object['exp']['stage2_end_time'] = new Date();
+            removeElementById("stage2");
+            displaySave()
+        };
+
+        // 设置倒计时，时间到了执行 onTimeout
+        createCountdownTimer(s3_input_time_seconds, onStage3Timeout);
+        s3_input_box.focus();
+    }
+
+    function displaySave() {
+        // displayButton("save", onSave, "保存实验结果");
+        let button = createElementButton("save_btn", onSave1, "保存实验结果");
+        document.getElementById("save").insertAdjacentElement("beforeend", button);
+    }
+
+    function onStage3Input() {
+        console.log("onStage2Input called");
+        let now = new Date();
+        console.log("elapsed seconds="+(now-exp_start_time)/1000);
+
+        if ((now -exp_start_time) > 480*1000) {
+            console.log("time's up");
+            return;
+        }
+        let t = document.getElementById("s2_input_box");
+        let text = t.value;
+        if (text.length < 4) {
+            console.log("text="+ text + ", text.length < 4");
+            return;
+        }
+        let initialWithd = startsWithd(text);
+
+        let l = document.createElement("li");
+        l.innerText = text;
+
+        let sample = [];
+        sample.push(text);
+        sample.push(now);
+
+        let list;
+        if (initialWithd) {
+            list = document.getElementById("right_list");
+            test_object['stage3']['right_list'].push(sample);
+        } else {
+            list = document.getElementById("left_list");
+            test_object['stage3']['left_list'].push(sample);
+        }
+
+        list.insertAdjacentElement("beforeend", l);
+        t.value = "";
+        t.focus();
+    }
+
+
+    function onSave1() {
+        // test_object['exp']['left_list_num'] = test_object['exp']['left_list'].length;
+        // test_object['exp']['right_list_num'] = test_object['exp']['right_list'].length;
+        let filename = test_object["user_id"];
+        filename += ".stage1.txt";
+        console.log("onSave1 called filename="+filename);
+
+        let text = JSON.stringify(test_object);
+        download(filename, text);
+        removeElementById('left');
+        removeElementById('right');
+        removeElementById('save');
+        displaySpeedInput();
+    }
+
+    function onSave2() {
+        let filename = test_object["user_id"];
+        filename += ".stage2.txt";
+        console.log("onSave2 called filename="+filename);
+        //input = document.getElementById("speed_text").innerText
+
+        let text = JSON.stringify(test_object);
+        download(filename, text);
+
+        // 一次实验完成，重新刷新页面
+        //window.location.reload(false);
+        // 删除btn
+        removeElementById("save2_btn");
+
+        // 改变save2_msg的描述
+        p = createElementP("结果已保存，请向领导回复“已完成”")
+        document.getElementById("save2").insertAdjacentElement("beforeend", p);
+    }
+
+    // 工具类，完成一个功能，和具体的业务流程无关
+    function download(filename, text) {
+        let pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+
+        if (document.createEvent) {
+            let event = document.createEvent('MouseEvents');
+            event.initEvent('click', true, true);
+            pom.dispatchEvent(event);
+        }
+        else {
+            pom.click();
+        }
+    }
+
+    // 在id=div_id 的div的最后添加一个button
+    function displayButton(divId, onClick, text) {
+        let buttonId = divId+"_button";
+        let button = createElementButton(buttonId, onClick, text);
+        document.getElementById(divId).insertAdjacentElement("beforeend", button);
+    }
+
+    function removeElementById(elem) {
+        let n = document.getElementById(elem);
+        n.parentNode.removeChild(n);
+    }
+
+    function clearElementValue(elem) {
+        let n = document.getElementById(elem);
+        n.value = ""
+    }
+
+    function createElementP(innerText) {
+        let p = document.createElement("p");
+        p.innerText = innerText;
+        return p;
+    }
+
+    function createElementInputText(inputId) {
+        let text = document.createElement("input");
+        text.id = inputId;
+        text.type = "text";
+        return text;
+    }
+
+    function createElementButton(buttonId, onClick, text) {
+        let button = document.createElement("button");
+        button.id = buttonId;
+        button.innerText = text;
+        button.onclick = onClick;
+        button.classList.add("button");
+        return button;
+    }
+
+    // 设置一个Countdown Timer定时任务
+    // 当 timeoutSeconds 过去之后，执行回调函数 onTimeout
+    function createCountdownTimer(timeoutSeconds, onTimeout) {
+        // 计算得到倒计时停止时间
+        let now = new Date();
+        let timeoutDate = now.getTime()+timeoutSeconds*1000;
+        let countDownDate = new Date(timeoutDate).getTime();
+
+        // Update the count down every 1 second
+        let x = setInterval(function() {
+
+            // Get todays date and time
+            let now = new Date().getTime();
+
+            // Find the distance between now and the count down date
+            let distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="timer"
+            document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("timer").innerHTML = "00m 00s";
+                onTimeout();
+            }
+        }, 1000);
+    }
+
+    function startsWithd(text) {
+        if (text.length == 0)
+            return false;
+        return text[0] =='d';
+    }
+
+    function notStartsWithd(text) {
+        if (text.length == 0)
+            return false;
+        return text[0] !='d';
+    }
+
+    let num_char = ["零", "一", "二", "三", "四", "五", "六", "七", "八",
+        "九", "十", "百", "千", "万", "亿"];
+    function chengyuStartsWithNumber(text) {
+        let c = text.charAt(0);
+        let found = false;
+        for (let j = 0; j < num_char.length; j++) {
+            // console.log("c="+c+", num_char="+num_char[j]);
+            if (c === num_char[j]) {
+                found = true;
+                console.log(c + " found");
+                break;
+            }
+        }
+        return found;
+    }
+
+    function chengyuContainsNumber(text) {
+        let found = false;
+        for (let i = 0; i < text.length; ++i) {
+            let c = text.charAt(i);
+            for (let j = 0; j < num_char.length; j++) {
+                // console.log("c="+c+", num_char="+num_char[j]);
+                if (c === num_char[j]) {
+                    found = true;
+                    console.log(c + " found");
+                    break;
+                }
+            }
+        }
+        return found;
+    }
+
+
+</script>
+
+</body>
+</html>
