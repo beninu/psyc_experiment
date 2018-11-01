@@ -254,8 +254,8 @@
 
     function displayChengyuInput() {
         console.log("displayChengyuInput called");
-        let innerText = "输入一个成语后，回车即可";
-        let p = createElementP(innerText);
+        let p = createElementP("输入一个成语后，回车即可");
+        let p1 = createElementP("请回想领导对任务的要求,");
 
         let chengyu_text = createElementInputText("chengyu_text");
 
@@ -271,6 +271,7 @@
         });
 
         document.getElementById('header').innerText = "请在8分钟内写出数字开头的成语和非数字开头的成语";
+        document.getElementById('input1').insertAdjacentElement("beforeend", p1);
         document.getElementById('input1').insertAdjacentElement("beforeend", p);
         document.getElementById('input1').insertAdjacentElement("beforeend", start_button);
         document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
