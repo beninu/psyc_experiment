@@ -91,9 +91,6 @@
         <c3></c3>
     </section>
     <br/>
-    <br/>
-    <br/>
-    <br/>
     <section>
         <c1></c1>
         <c2>
@@ -134,8 +131,8 @@
     let speed_start_time;
 
     // for test
-    // chengyu_input_time_seconds = 4;
-    // speed_input_time_seconds = 6;
+    chengyu_input_time_seconds = 4;
+    speed_input_time_seconds = 6;
 
     // 用来存放最后需要输出的结构
     let test_object = new Map();
@@ -273,7 +270,7 @@
             }
         });
 
-        document.getElementById('header').innerText = "请在8分钟内写出";
+        document.getElementById('header').innerText = "请在8分钟内写出数字开头的成语和非数字开头的成语";
         document.getElementById('input1').insertAdjacentElement("beforeend", p);
         document.getElementById('input1').insertAdjacentElement("beforeend", start_button);
         document.getElementById('input1').insertAdjacentElement("beforeend", chengyu_text);
@@ -386,7 +383,7 @@
         removeElementById("save1");
         removeElementById("left");
         removeElementById("right");
-        document.getElementById('header').innerText = ""
+        document.getElementById('header').innerText = "";
         displaySpeedInput();
     }
 

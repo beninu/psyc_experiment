@@ -43,6 +43,8 @@
 <body>
 <!--<p id="timer" style="font-size:300%;" align="center">00m 00s</p>-->
 <p id="timer" style="font-size:300%;" align="center"></p>
+<div id="header" align="center">
+</div>
 <div style="width: 100%; overflow: hidden;">
     <div id="left_blank"; style="width: 25%; float: left;">
         .
@@ -88,9 +90,6 @@
         <c3></c3>
     </section>
     <br/>
-    <br/>
-    <br/>
-    <br/>
     <section>
         <c1></c1>
         <c2>
@@ -132,9 +131,9 @@
     let speed_start_time;
 
     // for test
-    // s1_input_time_seconds = 5;
-    // s2_input_time_seconds = 5;
-    // speed_input_time_seconds = 6;
+    s1_input_time_seconds = 5;
+    s2_input_time_seconds = 5;
+    speed_input_time_seconds = 6;
 
     // 用来存放最后需要输出的结构
     let test_object = new Map();
@@ -208,7 +207,8 @@
 
         removeElementById('lingdao_radio');
 
-        let innerHTML = "<p>前四分钟写</p>";
+        document.getElementById('header').innerText = "请前4分钟写数字开头成语，后4分钟写非数字开头成语\n";
+        let innerHTML = "";
         innerHTML += "<p>数字开头的成语</p>";
         innerHTML += "<p>比如: 一石二鸟 三足鼎立 百口莫辩</p>";
         // innerHTML += "<p>一石二鸟</p>";
@@ -220,7 +220,7 @@
         elementLeft.innerHTML = innerHTML;
 
 
-        let innerHTML2 = "<p>后四分钟写</p>";
+        let innerHTML2 = "";
         innerHTML2 += "<p>非数字开头的成语</p>";
         innerHTML2 += "<p>很多, 就不举例去限制你的思维了</p>";
         // innerHTML2 += "<p>就不举例</p>";
@@ -418,6 +418,7 @@
         removeElementById('left');
         removeElementById('right');
         removeElementById('save');
+        document.getElementById('header').innerText = "";
         displaySpeedInput();
     }
 
