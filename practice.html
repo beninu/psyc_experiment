@@ -170,7 +170,7 @@
         elementRight.innerHTML = innerHTML2;
 
 
-        let innerText = "请输入d开头的4个字母，时间为30s，回车即可";
+        let innerText = "请输入d开头的4个字母(不一定是单词)，时间为30s，回车即可";
         let p = createElementP(innerText);
 
         let s1_input_box = createElementInputText("s1_input_box");
@@ -258,7 +258,7 @@
     function displayStage2() {
         console.log("displayStage2 called");
         document.getElementById('timer').innerText = "0m 30s";
-        let innerText = "请输入非d开头的4个字母，时间为30s，回车即可";
+        let innerText = "请输入非d开头的4个字母(不一定是单词)，时间为30s，回车即可";
         let p = createElementP(innerText);
 
         let s2_input_box = createElementInputText("s2_input_box");
@@ -362,7 +362,7 @@
 
 
 
-        let innerText = "请输入d字开头和非d开头的4个字母，时间为40秒，回车即可";
+        let innerText = "请输入d字开头和非d开头的4个字母(不一定是单词)，时间为40秒，回车即可";
         let p = createElementP(innerText);
 
         let s3_input_box = createElementInputText("s3_input_box");
@@ -459,7 +459,7 @@
         download(filename, text);
 
         // 改变save2_msg的描述
-        p = createElementP("结果已保存，请向领导回复“已完成”");
+        p = createElementP("练习已经结束，请向领导回复“已完成”");
         document.getElementById("save3").insertAdjacentElement("beforeend", p);
     }
 
